@@ -1,0 +1,12 @@
+.idea
+.DS_Store
+*.log
+node_modules/
+dist/
+lib/
+src/assets/
+script/getPackage.js
+script/handleLibaryName.js
+webpack.config.js
+treer.js
+gulpfile.js
