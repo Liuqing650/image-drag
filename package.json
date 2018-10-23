@@ -8,11 +8,12 @@
     "start": "maby-lib start",
     "build": "maby-lib build",
     "init": "maby-lib init",
-    "analyzer": "maby-lib analyzer"
+    "analyzer": "maby-lib analyzer",
+    "preview": "maby-lib preview"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "maby-lib-cli": "^1.0.0"
+    "maby-lib-cli": "^1.1.0"
   }
 }

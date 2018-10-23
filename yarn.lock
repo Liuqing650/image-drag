@@ -4519,9 +4519,9 @@ lru-cache@^4.0.1, lru-cache@^4.1.1:
     pseudomap "^1.0.2"
     yallist "^2.1.2"
 
-maby-lib-cli@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/maby-lib-cli/-/maby-lib-cli-1.0.0.tgz#51abd7c3c36f59a57135aeef13798e4557aa5131"
+maby-lib-cli@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/maby-lib-cli/-/maby-lib-cli-1.1.0.tgz#e60a71dcf5b68d6ed6268a8ed28096d2e123ff9f"
   dependencies:
     "@babel/polyfill" "^7.0.0-beta.51"
     ajv "^6.1.0"
