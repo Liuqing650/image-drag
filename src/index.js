@@ -196,7 +196,7 @@ class ImageDrag extends React.Component {
       onBlur: this.onBlurImage,
       style: {
         outline: 'none',
-        position: ' ',
+        position: 'relative',
         display: 'inline-block'
       }
     }
