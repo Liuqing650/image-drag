@@ -102,7 +102,7 @@ class Drag extends React.Component {
           x: position.deltaX,
           y: position.deltaY
       })
-      this.styleChange(direction);
+      this.styleChange(direction, 'dragStart');
     }
     onDragStart = (event, direction) => {
       document.body.style.userSelect = 'none';
@@ -137,7 +137,6 @@ class Drag extends React.Component {
         lastX: this.state.x,
         lastY: this.state.y,
         zIndex: 10,
-        isMove: true,
         direction: direction,
         bgImgStyle: {
           ...bgImgStyle,
@@ -160,40 +159,41 @@ class Drag extends React.Component {
         document.removeEventListener('touchmove', this.move)
         document.removeEventListener('touchend', this.onDragEnd)
       }
-      this.setState({
-        zIndex: 1,
-        isMove: false
-      })
       const { bgImgStyle } = this.state;
       this.setState({
+        zIndex: 1,
         bgImgStyle: {
           ...bgImgStyle,
           opacity: 0,
         }
       })
-      this.styleChange(direction);
+      this.styleChange(direction, 'dragEnd');
       if (this.props.onDragEnd) {
         this.props.onDragEnd(event, this.state.x, this.state.y);
       }
     }
-    styleChange = (direction) => {
+    styleChange = (direction, dragStatus) => {
       const { x, y, zIndex, bgImgStyle } = this.state;
+      const isMove = dragStatus === 'dragStart';
       const { imgStyle } = this.props;
       const style = {
         width: (imgStyle.width + x),
         height: (imgStyle.height + y),
+        isMove,
         zIndex,
-        top: ['topLeft', 'topRight'].includes(direction) ? 'auto' : 0,
-        bottom: ['bottomLeft', 'bottomRight'].includes(direction) ? 'auto' : 0,
-        right: ['topRight', 'bottomRight'].includes(direction) ? 'auto' : 0,
-        left: ['topLeft', 'bottomLeft'].includes(direction) ? 'auto' : 0,
+        top: ['topLeft', 'topRight'].includes(direction) && isMove ? 'auto' : 0,
+        bottom: ['bottomLeft', 'bottomRight'].includes(direction) && isMove ? 'auto' : 0,
+        right: ['topRight', 'bottomRight'].includes(direction) && isMove ? 'auto' : 0,
+        left: ['topLeft', 'bottomLeft'].includes(direction) && isMove ? 'auto' : 0,
       }
       this.setState({
         imgStyle: {
           ...style
         }
       });
-      this.props.onStyleChange(style);
+      if (this.props.onStyleChange && typeof this.props.onStyleChange === 'function') {
+        this.props.onStyleChange(style);
+      }
     };
     renderDragPoint = (direction) => {
       const { pointStyle } = this.state;

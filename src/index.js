@@ -121,11 +121,16 @@ class ImageDrag extends React.Component {
         }
       });
     } else {
-      console.log('open modal...');
+      const onClickImage = this.props.onClickImage;
+      if (onClickImage && typeof onClickImage === 'function') {
+        const toolInfo = {
+          ...toolBar,
+          width: dragStyle.width || imgStyle.width,
+          height: dragStyle.height || imgStyle.height
+        };
+        onClickImage(toolInfo);
+      }
     }
-    console.log('open isFocus...', toolBar.isFocus);
-    // console.log(even.target);
-    // console.log(even.target.width);
   }
   onBlurImage = (even) => {
     const { toolBar } = this.state;

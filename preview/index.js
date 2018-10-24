@@ -2603,7 +2603,7 @@ var Drag = function (_React$Component) {
           x: position.deltaX,
           y: position.deltaY
         });
-        _this.styleChange(direction);
+        _this.styleChange(direction, 'dragStart');
       }
     });
     Object.defineProperty(_this, 'onDragStart', {
@@ -2644,7 +2644,6 @@ var Drag = function (_React$Component) {
           lastX: _this.state.x,
           lastY: _this.state.y,
           zIndex: 10,
-          isMove: true,
           direction: direction,
           bgImgStyle: (0, _extends3.default)({}, bgImgStyle, {
             opacity: 0.2
@@ -2670,18 +2669,15 @@ var Drag = function (_React$Component) {
           document.removeEventListener('touchmove', _this.move);
           document.removeEventListener('touchend', _this.onDragEnd);
         }
-        _this.setState({
-          zIndex: 1,
-          isMove: false
-        });
         var bgImgStyle = _this.state.bgImgStyle;
 
         _this.setState({
+          zIndex: 1,
           bgImgStyle: (0, _extends3.default)({}, bgImgStyle, {
             opacity: 0
           })
         });
-        _this.styleChange(direction);
+        _this.styleChange(direction, 'dragEnd');
         if (_this.props.onDragEnd) {
           _this.props.onDragEnd(event, _this.state.x, _this.state.y);
         }
@@ -2690,27 +2686,32 @@ var Drag = function (_React$Component) {
     Object.defineProperty(_this, 'styleChange', {
       enumerable: true,
       writable: true,
-      value: function value(direction) {
+      value: function value(direction, dragStatus) {
         var _this$state2 = _this.state,
             x = _this$state2.x,
             y = _this$state2.y,
             zIndex = _this$state2.zIndex,
             bgImgStyle = _this$state2.bgImgStyle;
+
+        var isMove = dragStatus === 'dragStart';
         var imgStyle = _this.props.imgStyle;
 
         var style = {
           width: imgStyle.width + x,
           height: imgStyle.height + y,
+          isMove: isMove,
           zIndex: zIndex,
-          top: ['topLeft', 'topRight'].includes(direction) ? 'auto' : 0,
-          bottom: ['bottomLeft', 'bottomRight'].includes(direction) ? 'auto' : 0,
-          right: ['topRight', 'bottomRight'].includes(direction) ? 'auto' : 0,
-          left: ['topLeft', 'bottomLeft'].includes(direction) ? 'auto' : 0
+          top: ['topLeft', 'topRight'].includes(direction) && isMove ? 'auto' : 0,
+          bottom: ['bottomLeft', 'bottomRight'].includes(direction) && isMove ? 'auto' : 0,
+          right: ['topRight', 'bottomRight'].includes(direction) && isMove ? 'auto' : 0,
+          left: ['topLeft', 'bottomLeft'].includes(direction) && isMove ? 'auto' : 0
         };
         _this.setState({
           imgStyle: (0, _extends3.default)({}, style)
         });
-        _this.props.onStyleChange(style);
+        if (_this.props.onStyleChange && typeof _this.props.onStyleChange === 'function') {
+          _this.props.onStyleChange(style);
+        }
       }
     });
     Object.defineProperty(_this, 'renderDragPoint', {
@@ -3118,11 +3119,15 @@ var ImageDrag = function (_React$Component) {
             })
           });
         } else {
-          console.log('open modal...');
+          var onClickImage = _this.props.onClickImage;
+          if (onClickImage && typeof onClickImage === 'function') {
+            var toolInfo = (0, _extends3.default)({}, toolBar, {
+              width: dragStyle.width || imgStyle.width,
+              height: dragStyle.height || imgStyle.height
+            });
+            onClickImage(toolInfo);
+          }
         }
-        console.log('open isFocus...', toolBar.isFocus);
-        // console.log(even.target);
-        // console.log(even.target.width);
       }
     }), Object.defineProperty(_this, 'onBlurImage', {
       enumerable: true,
