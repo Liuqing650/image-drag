@@ -104,10 +104,40 @@ var Example = function (_Component) {
         image: imgSrc,
         onDragEnd: this.onDragEnd
       };
+      var wrapStyle = {
+        width: 1200,
+        height: 800,
+        margin: '20px auto'
+      };
       return _react2.default.createElement(
         'div',
         null,
-        _react2.default.createElement(_src2.default, dragProps)
+        _react2.default.createElement(
+          'div',
+          { style: wrapStyle },
+          _react2.default.createElement(
+            'h1',
+            null,
+            '\u5B50\u5143\u7D20'
+          ),
+          _react2.default.createElement(
+            _src2.default,
+            dragProps,
+            _react2.default.createElement('img', { style: {
+                width: '100%',
+                height: '100%'
+              },
+              src: imgSrc
+            })
+          ),
+          _react2.default.createElement(
+            'h1',
+            null,
+            '\u65E0\u5B50\u5143\u7D20'
+          ),
+          _react2.default.createElement(_src2.default, dragProps),
+          _react2.default.createElement('div', { style: { height: 300 } })
+        )
       );
     }
   }]);
@@ -2518,41 +2548,75 @@ var Drag = function (_React$Component) {
         }
       }
     });
+    Object.defineProperty(_this, 'calculatePosition', {
+      enumerable: true,
+      writable: true,
+      value: function value(event, direction, isMouse) {
+        var _this$state = _this.state,
+            lastX = _this$state.lastX,
+            lastY = _this$state.lastY;
+
+        var deltaX = void 0,
+            deltaY = void 0;
+        var clientX = isMouse ? event.clientX : event.touches[0].clientX;
+        var clientY = isMouse ? event.clientY : event.touches[0].clientY;
+        switch (direction) {
+          case 'topLeft':
+            deltaX = _this.state.originX - clientX + lastX;
+            deltaY = _this.state.originY - clientY + lastY;
+            break;
+          case 'topRight':
+            deltaX = clientX - _this.state.originX + lastX;
+            deltaY = _this.state.originY - clientY + lastY;
+            break;
+          case 'bottomLeft':
+            deltaX = _this.state.originX - clientX + lastX;
+            deltaY = clientY - _this.state.originY + lastY;
+            break;
+          case 'bottomRight':
+            deltaX = clientX - _this.state.originX + lastX;
+            deltaY = clientY - _this.state.originY + lastY;
+            break;
+          default:
+            break;
+        }
+        return {
+          deltaX: deltaX,
+          deltaY: deltaY
+        };
+      }
+    });
     Object.defineProperty(_this, 'move', {
       enumerable: true,
       writable: true,
       value: function value(event) {
-        var _this$state = _this.state,
-            lastX = _this$state.lastX,
-            lastY = _this$state.lastY,
-            direction = _this$state.direction;
+        var direction = _this.state.direction;
 
-        console.log('direction------->', direction);
-        var deltaX = void 0,
-            deltaY = void 0;
+        var module = ['topLeft', 'topRight', 'bottomLeft', 'bottomRight'];
+        var position = {};
         if (event.type.indexOf('mouse') >= 0) {
-          deltaX = event.clientX - _this.state.originX + lastX;
-          deltaY = event.clientY - _this.state.originY + lastY;
+          position = _this.calculatePosition(event, direction, true);
         } else {
-          deltaX = event.touches[0].clientX - _this.state.originX + lastX;
-          deltaY = event.touches[0].clientY - _this.state.originY + lastY;
+          position = _this.calculatePosition(event, direction, false);
         }
         _this.setState({
-          x: deltaX,
-          y: deltaY
+          x: position.deltaX,
+          y: position.deltaY
         });
-        _this.styleChange();
+        _this.styleChange(direction);
       }
     });
     Object.defineProperty(_this, 'onDragStart', {
       enumerable: true,
       writable: true,
       value: function value(event, direction) {
+        document.body.style.userSelect = 'none';
+        event.preventDefault();
+        event.stopPropagation();
         if (isNaN(Number(event.button)) || Number(event.button) !== 0) {
           return;
         }
         _this.checkDocument();
-        document.body.style.userSelect = 'none';
         if (event.type.indexOf('mouse') >= 0) {
           document.addEventListener('mousemove', _this.move);
           document.addEventListener('mouseup', _this.onDragEnd);
@@ -2591,12 +2655,14 @@ var Drag = function (_React$Component) {
     Object.defineProperty(_this, 'onDragEnd', {
       enumerable: true,
       writable: true,
-      value: function value(event) {
+      value: function value(event, direction) {
+        document.body.style.userSelect = '';
+        event.preventDefault();
+        event.stopPropagation();
         if (isNaN(Number(event.button)) || Number(event.button) !== 0) {
           return;
         }
         _this.checkDocument();
-        document.body.style.userSelect = '';
         if (event.type.indexOf('mouse') >= 0) {
           document.removeEventListener('mousemove', _this.move);
           document.removeEventListener('mouseup', _this.onDragEnd);
@@ -2615,7 +2681,7 @@ var Drag = function (_React$Component) {
             opacity: 0
           })
         });
-        _this.styleChange();
+        _this.styleChange(direction);
         if (_this.props.onDragEnd) {
           _this.props.onDragEnd(event, _this.state.x, _this.state.y);
         }
@@ -2624,7 +2690,7 @@ var Drag = function (_React$Component) {
     Object.defineProperty(_this, 'styleChange', {
       enumerable: true,
       writable: true,
-      value: function value() {
+      value: function value(direction) {
         var _this$state2 = _this.state,
             x = _this$state2.x,
             y = _this$state2.y,
@@ -2635,7 +2701,11 @@ var Drag = function (_React$Component) {
         var style = {
           width: imgStyle.width + x,
           height: imgStyle.height + y,
-          zIndex: zIndex
+          zIndex: zIndex,
+          top: ['topLeft', 'topRight'].includes(direction) ? 'auto' : 0,
+          bottom: ['bottomLeft', 'bottomRight'].includes(direction) ? 'auto' : 0,
+          right: ['topRight', 'bottomRight'].includes(direction) ? 'auto' : 0,
+          left: ['topLeft', 'bottomLeft'].includes(direction) ? 'auto' : 0
         };
         _this.setState({
           imgStyle: (0, _extends3.default)({}, style)
@@ -2716,7 +2786,6 @@ var Drag = function (_React$Component) {
       zIndex: 1,
       isMove: false,
       direction: '',
-      dragType: 'drag',
       imgStyle: {},
       pointStyle: {
         position: 'absolute',
@@ -2751,11 +2820,7 @@ var Drag = function (_React$Component) {
     key: 'render',
     value: function render() {
       var _state = this.state,
-          dragType = _state.dragType,
-          x = _state.x,
-          y = _state.y,
           isMove = _state.isMove,
-          wrapInfo = _state.wrapInfo,
           bgImgStyle = _state.bgImgStyle,
           imgStyle = _state.imgStyle;
       var bgImg = this.props.bgImg;
@@ -2767,12 +2832,12 @@ var Drag = function (_React$Component) {
             width: imgStyle.width,
             height: imgStyle.height,
             position: 'absolute',
-            top: 0,
-            bottom: 0,
-            right: 0,
-            left: 0,
+            top: imgStyle.top || 0,
+            bottom: imgStyle.bottom || 0,
+            right: imgStyle.right || 0,
+            left: imgStyle.left || 0,
             transition: isMove ? '' : 'all .2s ease-out',
-            zIndex: isMove ? this.props.dragType === 'drag' ? 10 : 2 : 2
+            zIndex: isMove ? 10 : 2
           }
         },
         _react2.default.createElement('img', { src: bgImg, style: bgImgStyle }),
@@ -2789,7 +2854,11 @@ var Drag = function (_React$Component) {
 Drag.defaultProps = {
   imgStyle: {
     width: 600,
-    height: 400
+    height: 400,
+    top: 0,
+    bottom: 0,
+    right: 0,
+    left: 0
   }
 };
 exports.default = Drag;
@@ -3013,10 +3082,13 @@ var ImageDrag = function (_React$Component) {
           });
           return toolBar.render(toolInfo);
         }
+        var toolBarStyle = {
+          position: 'absolute'
+        };
         if (isShowToolBar) {
           return _react2.default.createElement(
             'div',
-            { className: toolBar.className || '' },
+            { className: toolBar.className || '', style: toolBarStyle },
             'width: ',
             _react2.default.createElement(
               'span',
@@ -3158,7 +3230,8 @@ var ImageDrag = function (_React$Component) {
         onBlur: this.onBlurImage,
         style: {
           outline: 'none',
-          position: 'relative'
+          position: 'relative',
+          display: toolBar.isBlock ? 'block' : 'inline-block'
         }
       };
       return _react2.default.createElement(

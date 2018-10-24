@@ -98,9 +98,12 @@ class ImageDrag extends React.Component {
       };
       return toolBar.render(toolInfo);
     }
+    const toolBarStyle = {
+      position: 'absolute',
+    }
     if (isShowToolBar) {
       return (
-        <div className={toolBar.className || ''}>
+        <div className={toolBar.className || ''} style={toolBarStyle}>
           width: <span>{dragStyle.width || imgStyle.width}</span>
           height: <span>{dragStyle.height || imgStyle.height}</span>
         </div>
@@ -194,6 +197,7 @@ class ImageDrag extends React.Component {
       style: {
         outline: 'none',
         position: 'relative',
+        display: toolBar.isBlock ? 'block' : 'inline-block'
       }
     }
     return (

@@ -27,17 +27,27 @@ export default class Example extends Component {
       image: imgSrc,
       onDragEnd: this.onDragEnd,
     }
+    const wrapStyle = {
+      width: 1200,
+      height: 800,
+      margin: '20px auto'
+    }
     return (
       <div>
-        {/* <ImageDrag {...dragProps}>
-          <img style={{
-              width: '100%',
-              height: '100%'
-            }}
-            src={imgSrc}
-          />
-        </ImageDrag> */}
-        <ImageDrag {...dragProps} />
+        <div style={wrapStyle}>
+          <h1>子元素</h1>
+          <ImageDrag {...dragProps}>
+            <img style={{
+                width: '100%',
+                height: '100%'
+              }}
+              src={imgSrc}
+            />
+          </ImageDrag>
+          <h1>无子元素</h1>
+          <ImageDrag {...dragProps} />
+          <div style={{height: 300}} />
+        </div>
       </div>
     );
   }

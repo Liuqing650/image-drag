@@ -13,7 +13,6 @@ class Drag extends React.Component {
         zIndex: 1,
         isMove: false,
         direction: '',
-        dragType: 'drag',
         imgStyle: {},
         pointStyle: {
           position: 'absolute',
@@ -60,29 +59,59 @@ class Drag extends React.Component {
         return;
       }
     }
-    move = (event) => {
-      let { lastX, lastY, direction } = this.state;
-      console.log('direction------->', direction);
+    calculatePosition = (event, direction, isMouse) => {
+      let { lastX, lastY } = this.state;
       let deltaX, deltaY;
+      const clientX = (isMouse ? event.clientX : event.touches[0].clientX);
+      const clientY = (isMouse ? event.clientY : event.touches[0].clientY);
+      switch (direction) {
+        case 'topLeft':
+          deltaX = this.state.originX - clientX + lastX;
+          deltaY = this.state.originY - clientY + lastY;
+          break;
+        case 'topRight':
+          deltaX = clientX - this.state.originX + lastX;
+          deltaY = this.state.originY - clientY + lastY;
+          break;
+        case 'bottomLeft':
+          deltaX = this.state.originX - clientX + lastX;
+          deltaY = clientY - this.state.originY + lastY;
+          break;
+        case 'bottomRight':
+          deltaX = clientX - this.state.originX + lastX;
+          deltaY = clientY - this.state.originY + lastY;
+          break;
+        default:
+          break;
+      }
+      return {
+        deltaX,
+        deltaY
+      }
+    }
+    move = (event) => {
+      const { direction } = this.state;
+      const module = ['topLeft', 'topRight', 'bottomLeft', 'bottomRight'];
+      let position = {};
       if (event.type.indexOf('mouse') >= 0) {
-          deltaX = event.clientX - this.state.originX + lastX
-          deltaY = event.clientY - this.state.originY + lastY
+        position = this.calculatePosition(event, direction , true);
       } else {
-          deltaX = event.touches[0].clientX - this.state.originX + lastX
-          deltaY = event.touches[0].clientY - this.state.originY + lastY
+        position = this.calculatePosition(event, direction , false);
       }
       this.setState({
-          x: deltaX,
-          y: deltaY
+          x: position.deltaX,
+          y: position.deltaY
       })
-      this.styleChange();
+      this.styleChange(direction);
     }
     onDragStart = (event, direction) => {
+      document.body.style.userSelect = 'none';
+      event.preventDefault();
+      event.stopPropagation();
       if (isNaN(Number(event.button)) || Number(event.button) !== 0) {
         return;
       }
       this.checkDocument();
-      document.body.style.userSelect = 'none';
       if (event.type.indexOf('mouse') >= 0) {
           document.addEventListener('mousemove', this.move);
           document.addEventListener('mouseup', this.onDragEnd);
@@ -116,12 +145,14 @@ class Drag extends React.Component {
         }
       })
     }
-    onDragEnd = (event) => {
+    onDragEnd = (event, direction) => {
+      document.body.style.userSelect = '';
+      event.preventDefault();
+      event.stopPropagation();
       if (isNaN(Number(event.button)) || Number(event.button) !== 0) {
         return;
       }
       this.checkDocument();
-      document.body.style.userSelect = '';
       if (event.type.indexOf('mouse') >= 0) {
         document.removeEventListener('mousemove', this.move)
         document.removeEventListener('mouseup', this.onDragEnd)
@@ -140,18 +171,22 @@ class Drag extends React.Component {
           opacity: 0,
         }
       })
-      this.styleChange();
+      this.styleChange(direction);
       if (this.props.onDragEnd) {
         this.props.onDragEnd(event, this.state.x, this.state.y);
       }
     }
-    styleChange = () => {
+    styleChange = (direction) => {
       const { x, y, zIndex, bgImgStyle } = this.state;
       const { imgStyle } = this.props;
       const style = {
         width: (imgStyle.width + x),
         height: (imgStyle.height + y),
-        zIndex
+        zIndex,
+        top: ['topLeft', 'topRight'].includes(direction) ? 'auto' : 0,
+        bottom: ['bottomLeft', 'bottomRight'].includes(direction) ? 'auto' : 0,
+        right: ['topRight', 'bottomRight'].includes(direction) ? 'auto' : 0,
+        left: ['topLeft', 'bottomLeft'].includes(direction) ? 'auto' : 0,
       }
       this.setState({
         imgStyle: {
@@ -215,10 +250,7 @@ class Drag extends React.Component {
       return (<span {...pointBtnProps} style={position[direction]}/>);
     }
     render() {
-        const {
-          dragType, x, y, isMove, wrapInfo,
-          bgImgStyle, imgStyle
-        } = this.state;
+        const { isMove,  bgImgStyle, imgStyle } = this.state;
         const { bgImg } = this.props;
         return (
           <div
@@ -226,12 +258,12 @@ class Drag extends React.Component {
               width: imgStyle.width,
               height: imgStyle.height,
               position: 'absolute',
-              top: 0,
-              bottom: 0,
-              right: 0,
-              left: 0,
+              top: imgStyle.top || 0,
+              bottom: imgStyle.bottom || 0,
+              right: imgStyle.right || 0,
+              left: imgStyle.left || 0,
               transition: isMove ? '' : 'all .2s ease-out',
-              zIndex: isMove ? (this.props.dragType === 'drag' ? 10 : 2) : 2,
+              zIndex: isMove ? 10 : 2,
             }}
           >
             <img src={bgImg} style={bgImgStyle} />
@@ -246,7 +278,11 @@ class Drag extends React.Component {
 Drag.defaultProps = {
   imgStyle: {
     width: 600,
-    height: 400
+    height: 400,
+    top: 0,
+    bottom: 0,
+    right: 0,
+    left: 0,
   },
 };
 export default Drag;
