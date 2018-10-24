@@ -12,9 +12,7 @@ class Drag extends React.Component {
         originY: 0,
         zIndex: 1,
         isMove: false,
-        placeholderShow: false,
-        placeholderMoving: false,
-        containerHeight: props.containerHeight || 200,
+        direction: '',
         dragType: 'drag',
         imgStyle: {},
         pointStyle: {
@@ -63,8 +61,8 @@ class Drag extends React.Component {
       }
     }
     move = (event) => {
-      let { lastX, lastY } = this.state;
-
+      let { lastX, lastY, direction } = this.state;
+      console.log('direction------->', direction);
       let deltaX, deltaY;
       if (event.type.indexOf('mouse') >= 0) {
           deltaX = event.clientX - this.state.originX + lastX
@@ -79,7 +77,7 @@ class Drag extends React.Component {
       })
       this.styleChange();
     }
-    onDragStart = (event) => {
+    onDragStart = (event, direction) => {
       if (isNaN(Number(event.button)) || Number(event.button) !== 0) {
         return;
       }
@@ -111,6 +109,7 @@ class Drag extends React.Component {
         lastY: this.state.y,
         zIndex: 10,
         isMove: true,
+        direction: direction,
         bgImgStyle: {
           ...bgImgStyle,
           opacity: 0.2,
@@ -208,10 +207,10 @@ class Drag extends React.Component {
         }
       }
       const pointBtnProps = {
-        onMouseDown: this.onDragStart,
-        onTouchStart: this.onDragStart,
-        onTouchEnd: this.onDragEnd,
-        onMouseUp: this.onDragEnd,
+        onMouseDown: (event) => this.onDragStart(event, direction),
+        onTouchStart: (event) => this.onDragStart(event, direction),
+        onTouchEnd: (event) => this.onDragEnd(event, direction),
+        onMouseUp: (event) => this.onDragEnd(event, direction),
       };
       return (<span {...pointBtnProps} style={position[direction]}/>);
     }

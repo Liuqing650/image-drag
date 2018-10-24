@@ -53,128 +53,47 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var imgSrc = 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1540805600&di=36ca8557dbe2dd2a6d5a285b7a63559c&imgtype=jpg&er=1&src=http%3A%2F%2Fimgsrc.baidu.com%2Fimgad%2Fpic%2Fitem%2F4610b912c8fcc3ce79f8f9099945d688d43f20cb.jpg';
 
-var Card = function (_Component) {
-  (0, _inherits3.default)(Card, _Component);
+var Example = function (_Component) {
+  (0, _inherits3.default)(Example, _Component);
 
-  function Card() {
+  function Example() {
     var _ref;
 
     var _temp, _this, _ret;
 
-    (0, _classCallCheck3.default)(this, Card);
+    (0, _classCallCheck3.default)(this, Example);
 
     for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
       args[_key] = arguments[_key];
     }
 
-    return _ret = (_temp = (_this = (0, _possibleConstructorReturn3.default)(this, (_ref = Card.__proto__ || (0, _getPrototypeOf2.default)(Card)).call.apply(_ref, [this].concat(args))), _this), Object.defineProperty(_this, 'onWidthChange', {
-      enumerable: true,
-      writable: true,
-      value: function value(even) {
-        console.log(even.target.value);
-      }
-    }), Object.defineProperty(_this, 'onHeightChange', {
-      enumerable: true,
-      writable: true,
-      value: function value(even) {
-        console.log(even.target.value);
-      }
-    }), _temp), (0, _possibleConstructorReturn3.default)(_this, _ret);
-  }
-
-  (0, _createClass3.default)(Card, [{
-    key: 'render',
-    value: function render() {
-      var _props = this.props,
-          style = _props.style,
-          dragEnd = _props.dragEnd,
-          dragStart = _props.dragStart;
-
-      var cardStyle = {
-        width: style.width || 200,
-        height: style.height || 200,
-        textAlign: 'center',
-        lineHeight: '200px',
-        color: '#222',
-        background: '#eaff8f'
-      };
-      var inputStyle = {
-        width: 200,
-        height: 50
-      };
-      return _react2.default.createElement(
-        'div',
-        { style: cardStyle },
-        _react2.default.createElement(
-          'div',
-          { style: {
-              position: 'absolute',
-              color: '#fff',
-              zIndex: 20
-            } },
-          _react2.default.createElement(
-            'span',
-            { style: inputStyle },
-            'width: ',
-            _react2.default.createElement('input', { onChange: this.onWidthChange, value: style.width }),
-            'height: ',
-            _react2.default.createElement('input', { onChange: this.onHeightChange, value: style.height })
-          )
-        ),
-        _react2.default.createElement('img', {
-          style: {
-            width: '100%',
-            height: '100%'
-          },
-          src: imgSrc
-        })
-      );
-    }
-  }]);
-  return Card;
-}(_react.Component);
-
-var Example = function (_Component2) {
-  (0, _inherits3.default)(Example, _Component2);
-
-  function Example() {
-    var _ref2;
-
-    var _temp2, _this2, _ret2;
-
-    (0, _classCallCheck3.default)(this, Example);
-
-    for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-      args[_key2] = arguments[_key2];
-    }
-
-    return _ret2 = (_temp2 = (_this2 = (0, _possibleConstructorReturn3.default)(this, (_ref2 = Example.__proto__ || (0, _getPrototypeOf2.default)(Example)).call.apply(_ref2, [this].concat(args))), _this2), Object.defineProperty(_this2, 'state', {
+    return _ret = (_temp = (_this = (0, _possibleConstructorReturn3.default)(this, (_ref = Example.__proto__ || (0, _getPrototypeOf2.default)(Example)).call.apply(_ref, [this].concat(args))), _this), Object.defineProperty(_this, 'state', {
       enumerable: true,
       writable: true,
       value: {
         style: {}
       }
-    }), Object.defineProperty(_this2, 'dragStart', {
+    }), Object.defineProperty(_this, 'dragStart', {
       enumerable: true,
       writable: true,
       value: function value(style) {
-        _this2.setState({
+        _this.setState({
           style: style,
           dragEnd: false,
           dragStart: true
         });
       }
-    }), Object.defineProperty(_this2, 'onDragEnd', {
+    }), Object.defineProperty(_this, 'onDragEnd', {
       enumerable: true,
       writable: true,
       value: function value(style) {
-        _this2.setState({
+        _this.setState({
           style: style,
           dragEnd: true,
           dragStart: false
         });
       }
-    }), _temp2), (0, _possibleConstructorReturn3.default)(_this2, _ret2);
+    }), _temp), (0, _possibleConstructorReturn3.default)(_this, _ret);
   }
 
   (0, _createClass3.default)(Example, [{
@@ -184,13 +103,8 @@ var Example = function (_Component2) {
         width: 600,
         image: imgSrc,
         onDragEnd: this.onDragEnd
-        // const { style } = this.state;
-        // const cardProps = {
-        //   style: style,
-        //   dragEnd: false,
-        //   dragStart: false,
-        // }
-      };return _react2.default.createElement(
+      };
+      return _react2.default.createElement(
         'div',
         null,
         _react2.default.createElement(_src2.default, dragProps)
@@ -2610,9 +2524,10 @@ var Drag = function (_React$Component) {
       value: function value(event) {
         var _this$state = _this.state,
             lastX = _this$state.lastX,
-            lastY = _this$state.lastY;
+            lastY = _this$state.lastY,
+            direction = _this$state.direction;
 
-
+        console.log('direction------->', direction);
         var deltaX = void 0,
             deltaY = void 0;
         if (event.type.indexOf('mouse') >= 0) {
@@ -2632,7 +2547,7 @@ var Drag = function (_React$Component) {
     Object.defineProperty(_this, 'onDragStart', {
       enumerable: true,
       writable: true,
-      value: function value(event) {
+      value: function value(event, direction) {
         if (isNaN(Number(event.button)) || Number(event.button) !== 0) {
           return;
         }
@@ -2666,6 +2581,7 @@ var Drag = function (_React$Component) {
           lastY: _this.state.y,
           zIndex: 10,
           isMove: true,
+          direction: direction,
           bgImgStyle: (0, _extends3.default)({}, bgImgStyle, {
             opacity: 0.2
           })
@@ -2773,10 +2689,18 @@ var Drag = function (_React$Component) {
           })
         };
         var pointBtnProps = {
-          onMouseDown: _this.onDragStart,
-          onTouchStart: _this.onDragStart,
-          onTouchEnd: _this.onDragEnd,
-          onMouseUp: _this.onDragEnd
+          onMouseDown: function onMouseDown(event) {
+            return _this.onDragStart(event, direction);
+          },
+          onTouchStart: function onTouchStart(event) {
+            return _this.onDragStart(event, direction);
+          },
+          onTouchEnd: function onTouchEnd(event) {
+            return _this.onDragEnd(event, direction);
+          },
+          onMouseUp: function onMouseUp(event) {
+            return _this.onDragEnd(event, direction);
+          }
         };
         return _react2.default.createElement('span', (0, _extends3.default)({}, pointBtnProps, { style: position[direction] }));
       }
@@ -2791,9 +2715,7 @@ var Drag = function (_React$Component) {
       originY: 0,
       zIndex: 1,
       isMove: false,
-      placeholderShow: false,
-      placeholderMoving: false,
-      containerHeight: props.containerHeight || 200,
+      direction: '',
       dragType: 'drag',
       imgStyle: {},
       pointStyle: {
@@ -3084,14 +3006,29 @@ var ImageDrag = function (_React$Component) {
             imgStyle = _this$state2.imgStyle;
 
         var isShowToolBar = toolBar.isUse && toolBar.isFocus;
+        if (toolBar.render && typeof toolBar.render === 'function') {
+          var toolInfo = (0, _extends3.default)({}, toolBar, {
+            width: dragStyle.width || imgStyle.width,
+            height: dragStyle.height || imgStyle.height
+          });
+          return toolBar.render(toolInfo);
+        }
         if (isShowToolBar) {
           return _react2.default.createElement(
             'div',
-            null,
+            { className: toolBar.className || '' },
             'width: ',
-            dragStyle.width || imgStyle.width,
-            ' height: ',
-            dragStyle.height || imgStyle.height
+            _react2.default.createElement(
+              'span',
+              null,
+              dragStyle.width || imgStyle.width
+            ),
+            'height: ',
+            _react2.default.createElement(
+              'span',
+              null,
+              dragStyle.height || imgStyle.height
+            )
           );
         }
       }
@@ -3101,6 +3038,7 @@ var ImageDrag = function (_React$Component) {
       value: function value(even) {
         var toolBar = _this.state.toolBar;
 
+        even.preventDefault();
         if (!toolBar.isFocus) {
           _this.setState({
             toolBar: (0, _extends3.default)({}, toolBar, {
@@ -3110,8 +3048,9 @@ var ImageDrag = function (_React$Component) {
         } else {
           console.log('open modal...');
         }
-        console.log(even.target);
-        console.log(even.target.width);
+        console.log('open isFocus...', toolBar.isFocus);
+        // console.log(even.target);
+        // console.log(even.target.width);
       }
     }), Object.defineProperty(_this, 'onBlurImage', {
       enumerable: true,

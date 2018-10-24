@@ -90,14 +90,26 @@ class ImageDrag extends React.Component {
   renderToolBar = () => {
     const { toolBar, dragStyle, imgStyle } = this.state;
     const isShowToolBar = toolBar.isUse && toolBar.isFocus;
+    if (toolBar.render && typeof toolBar.render === 'function') {
+      const toolInfo = {
+        ...toolBar,
+        width: dragStyle.width || imgStyle.width,
+        height: dragStyle.height || imgStyle.height
+      };
+      return toolBar.render(toolInfo);
+    }
     if (isShowToolBar) {
       return (
-        <div>width: {dragStyle.width || imgStyle.width} height: {dragStyle.height || imgStyle.height}</div>
+        <div className={toolBar.className || ''}>
+          width: <span>{dragStyle.width || imgStyle.width}</span>
+          height: <span>{dragStyle.height || imgStyle.height}</span>
+        </div>
       );
     }
   }
   onFocusImage = (even) => {
     const { toolBar } = this.state;
+    even.preventDefault();
     if (!toolBar.isFocus) {
       this.setState({
         toolBar: {
@@ -108,8 +120,9 @@ class ImageDrag extends React.Component {
     } else {
       console.log('open modal...');
     }
-    console.log(even.target);
-    console.log(even.target.width);
+    console.log('open isFocus...', toolBar.isFocus);
+    // console.log(even.target);
+    // console.log(even.target.width);
   }
   onBlurImage = (even) => {
     const { toolBar } = this.state;
