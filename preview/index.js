@@ -3230,8 +3230,8 @@ var ImageDrag = function (_React$Component) {
         onBlur: this.onBlurImage,
         style: {
           outline: 'none',
-          position: 'relative',
-          display: toolBar.isBlock ? 'block' : 'inline-block'
+          position: ' ',
+          display: 'inline-block'
         }
       };
       return _react2.default.createElement(
