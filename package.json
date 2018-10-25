@@ -1,5 +1,5 @@
 {
-  "name": "image-dragger",
+  "name": "image-drag",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,7 +9,8 @@
     "build": "maby-lib build",
     "init": "maby-lib init",
     "analyzer": "maby-lib analyzer",
-    "preview": "maby-lib preview"
+    "preview": "maby-lib preview",
+    "prepublish": "npm run build"
   },
   "author": "",
   "license": "ISC",
