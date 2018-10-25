@@ -1,11 +1,18 @@
 {
   "name": "image-drag",
-  "version": "1.0.0.beta.01",
-  "description": "",
-  "main": "index.js",
+  "version": "1.0.0",
+  "description": "一个使用拖拽修改图片尺寸的组件",
+  "main": "lib/index.js",
   "engines": {
     "node": ">=7.9.0"
   },
+  "files": [
+    "dist/",
+    "lib/",
+    "example/",
+    "package.json",
+    "README.md"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "maby-lib start",
@@ -23,8 +30,8 @@
     "url": "https://github.com/Liuqing650/image-drag/issues"
   },
   "homepage": "https://github.com/Liuqing650/image-drag#readme",
-  "author": "",
-  "license": "ISC",
+  "author": "Liuqing650",
+  "license": "MIT",
   "devDependencies": {
     "maby-lib-cli": "^1.1.0"
   }
