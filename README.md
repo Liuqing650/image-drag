@@ -2,6 +2,10 @@
 
 [图片拖拽缩放组件](https://liuqing650.github.io/image-drag/preview/)
 
+[![NPM](https://nodei.co/npm/image-drag.png)](https://nodei.co/npm/image-drag/)
+
+[![NPM](https://nodei.co/npm-dl/image-drag.png?months=3)](https://nodei.co/npm/image-drag/)
+
 ## API
 
 |name|type|desc|other|
