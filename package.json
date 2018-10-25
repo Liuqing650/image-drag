@@ -1,8 +1,11 @@
 {
   "name": "image-drag",
-  "version": "1.0.0",
+  "version": "1.0.0.beta.01",
   "description": "",
   "main": "index.js",
+  "engines": {
+    "node": ">=7.9.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "maby-lib start",
@@ -12,6 +15,14 @@
     "preview": "maby-lib preview",
     "prepublish": "npm run build"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Liuqing650/image-drag.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Liuqing650/image-drag/issues"
+  },
+  "homepage": "https://github.com/Liuqing650/image-drag#readme",
   "author": "",
   "license": "ISC",
   "devDependencies": {
