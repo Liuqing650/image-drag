@@ -37,12 +37,18 @@ class Drag extends React.Component {
       }
     }
     componentWillMount() {
-      this.initDragPoint();
+      this.changeDragPoint();
     }
-    initDragPoint = () => {
+    componentWillUpdate(newProps) {
+      if (this.props.imgStyle !== newProps.imgStyle) {
+        this.changeDragPoint(newProps);
+      }
+    }
+    changeDragPoint = (props) => {
+      const _props = props || this.props;
       const { pointStyle } = this.state;
-      const { style } = this.props.dragPoint;
-      const { imgStyle } = this.props;
+      const { style } = _props.dragPoint;
+      const { imgStyle } = _props;
       this.setState({
         pointStyle: {
           ...pointStyle,
@@ -206,7 +212,8 @@ class Drag extends React.Component {
       };
       const pointMove = -4;
       const attPoint = directionPoint[direction];
-      if (!attPoint || !toolBar.isFocus) {
+      const isShow = toolBar.isShow || toolBar.isFocus;
+      if (!attPoint || !isShow) {
         return;
       }
       let _pointStyle = Object.assign({}, pointStyle);

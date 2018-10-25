@@ -16,6 +16,9 @@
 |toolBar|object|工具栏配置|*|
 |dragPoint|object|拖拽点配置|*|
 |onClickImage|function|点击图片|function(toolInfo)|
+|renderTool|function|自定义工具栏显示形式|function(toolInfo),接收一个Dom元素|
+
+> renderTool中传入的参数为 `toolBar` 中的信息， 同时会多传递一个刷新图片尺寸的函数
 
 ## toolBar
 
@@ -25,10 +28,12 @@
 |bottom|number|位置属性|0|
 |left|number|位置属性|0|
 |right|number|位置属性|0|
+|width|number|拖拽后图片区域宽度|*|
+|height|number|拖拽后图片区域高度|*|
 |className|string|toolBar样式|*|
 |isUse|boolean|是否使用toolBar|true|
+|isShow|boolean|是否接管显示toolBar,会覆盖掉内置显示属性|false|
 |isBlock|boolean|是否进行块状化布局|*|
-|render|function|自定义工具栏显示形式|function(toolInfo),接收一个Dom元素|
 
 ## dragPoint
 

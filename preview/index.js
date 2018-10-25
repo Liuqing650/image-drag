@@ -21,6 +21,10 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = undefined;
 
+var _extends2 = __webpack_require__("./node_modules/babel-runtime/helpers/extends.js");
+
+var _extends3 = _interopRequireDefault(_extends2);
+
 var _getPrototypeOf = __webpack_require__("./node_modules/babel-runtime/core-js/object/get-prototype-of.js");
 
 var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
@@ -71,7 +75,10 @@ var Example = function (_Component) {
       enumerable: true,
       writable: true,
       value: {
-        style: {}
+        style: {},
+        isShow: false,
+        isUse: true,
+        toolBar: {}
       }
     }), Object.defineProperty(_this, 'dragStart', {
       enumerable: true,
@@ -93,16 +100,99 @@ var Example = function (_Component) {
           dragStart: false
         });
       }
+    }), Object.defineProperty(_this, 'onChangePoint', {
+      enumerable: true,
+      writable: true,
+      value: function value() {
+        var isShow = _this.state.isShow;
+
+        _this.setState({ isShow: !isShow });
+      }
+    }), Object.defineProperty(_this, 'onChangeToolbar', {
+      enumerable: true,
+      writable: true,
+      value: function value() {
+        var isUse = _this.state.isUse;
+
+        _this.setState({ isUse: !isUse });
+      }
+    }), Object.defineProperty(_this, 'onInputWidthChange', {
+      enumerable: true,
+      writable: true,
+      value: function value(event) {
+        var toolBar = _this.state.toolBar;
+
+        toolBar.width = isNaN(Number(event.target.value)) ? dragStyle.width : Number(event.target.value);
+        _this.setState({
+          toolBar: toolBar
+        });
+      }
+    }), Object.defineProperty(_this, 'onInputHeightChange', {
+      enumerable: true,
+      writable: true,
+      value: function value(event) {
+        var toolBar = _this.state.toolBar;
+
+        toolBar.height = isNaN(Number(event.target.value)) ? dragStyle.width : Number(event.target.value);
+        _this.setState({
+          toolBar: toolBar
+        });
+      }
     }), _temp), (0, _possibleConstructorReturn3.default)(_this, _ret);
   }
 
   (0, _createClass3.default)(Example, [{
     key: 'render',
     value: function render() {
+      var _state = this.state,
+          isShow = _state.isShow,
+          isUse = _state.isUse,
+          toolBar = _state.toolBar;
+
+      var self = this;
+      var dragRenderProps = {
+        width: 600,
+        image: imgSrc,
+        onDragEnd: this.onDragEnd,
+        toolBar: (0, _extends3.default)({}, toolBar, {
+          isShow: isShow,
+          isUse: isUse
+        }),
+        renderTool: function renderTool(toolInfo) {
+          if (!toolInfo.isUse || !toolInfo.isShow) {
+            return;
+          }
+          return _react2.default.createElement(
+            'div',
+            { style: { position: 'absolute' } },
+            'width: ',
+            _react2.default.createElement(
+              'span',
+              null,
+              _react2.default.createElement('input', { onChange: self.onInputWidthChange, value: toolInfo.width })
+            ),
+            'height: ',
+            _react2.default.createElement(
+              'span',
+              null,
+              _react2.default.createElement('input', { onChange: self.onInputHeightChange, value: toolInfo.height })
+            ),
+            _react2.default.createElement(
+              'button',
+              { onClick: toolInfo.sizeChange },
+              '\u4FEE\u6539\u5C3A\u5BF8'
+            )
+          );
+        }
+      };
       var dragProps = {
         width: 600,
         image: imgSrc,
-        onDragEnd: this.onDragEnd
+        onDragEnd: this.onDragEnd,
+        toolBar: {
+          isShow: isShow,
+          isUse: isUse
+        }
       };
       var wrapStyle = {
         width: 1200,
@@ -116,13 +206,23 @@ var Example = function (_Component) {
           'div',
           { style: wrapStyle },
           _react2.default.createElement(
+            'button',
+            { onClick: this.onChangePoint },
+            isShow ? 'HIDE' : 'SHOW'
+          ),
+          _react2.default.createElement(
+            'button',
+            { onClick: this.onChangeToolbar },
+            isUse ? 'HIDE-TOOLBAR' : 'SHOW-TOOLBAR'
+          ),
+          _react2.default.createElement(
             'h1',
             null,
             '\u5B50\u5143\u7D20'
           ),
           _react2.default.createElement(
             _src2.default,
-            dragProps,
+            dragRenderProps,
             _react2.default.createElement('img', { style: {
                 width: '100%',
                 height: '100%'
@@ -2510,13 +2610,15 @@ var _inherits2 = __webpack_require__("./node_modules/babel-runtime/helpers/inher
 
 var _inherits3 = _interopRequireDefault(_inherits2);
 
+var _class, _temp, _initialiseProps;
+
 var _react = __webpack_require__("./node_modules/react/index.js");
 
 var _react2 = _interopRequireDefault(_react);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var Drag = function (_React$Component) {
+var Drag = (_temp = _class = function (_React$Component) {
   (0, _inherits3.default)(Drag, _React$Component);
 
   function Drag(props) {
@@ -2524,258 +2626,7 @@ var Drag = function (_React$Component) {
 
     var _this = (0, _possibleConstructorReturn3.default)(this, (Drag.__proto__ || (0, _getPrototypeOf2.default)(Drag)).call(this, props));
 
-    Object.defineProperty(_this, 'initDragPoint', {
-      enumerable: true,
-      writable: true,
-      value: function value() {
-        var pointStyle = _this.state.pointStyle;
-        var style = _this.props.dragPoint.style;
-        var imgStyle = _this.props.imgStyle;
-
-        _this.setState({
-          pointStyle: (0, _extends3.default)({}, pointStyle, style),
-          imgStyle: (0, _extends3.default)({}, imgStyle)
-        });
-      }
-    });
-    Object.defineProperty(_this, 'checkDocument', {
-      enumerable: true,
-      writable: true,
-      value: function value() {
-        if (!document) {
-          console.error('没能获取到 window.document 对象');
-          return;
-        }
-      }
-    });
-    Object.defineProperty(_this, 'calculatePosition', {
-      enumerable: true,
-      writable: true,
-      value: function value(event, direction, isMouse) {
-        var _this$state = _this.state,
-            lastX = _this$state.lastX,
-            lastY = _this$state.lastY;
-
-        var deltaX = void 0,
-            deltaY = void 0;
-        var clientX = isMouse ? event.clientX : event.touches[0].clientX;
-        var clientY = isMouse ? event.clientY : event.touches[0].clientY;
-        switch (direction) {
-          case 'topLeft':
-            deltaX = _this.state.originX - clientX + lastX;
-            deltaY = _this.state.originY - clientY + lastY;
-            break;
-          case 'topRight':
-            deltaX = clientX - _this.state.originX + lastX;
-            deltaY = _this.state.originY - clientY + lastY;
-            break;
-          case 'bottomLeft':
-            deltaX = _this.state.originX - clientX + lastX;
-            deltaY = clientY - _this.state.originY + lastY;
-            break;
-          case 'bottomRight':
-            deltaX = clientX - _this.state.originX + lastX;
-            deltaY = clientY - _this.state.originY + lastY;
-            break;
-          default:
-            break;
-        }
-        return {
-          deltaX: deltaX,
-          deltaY: deltaY
-        };
-      }
-    });
-    Object.defineProperty(_this, 'move', {
-      enumerable: true,
-      writable: true,
-      value: function value(event) {
-        var direction = _this.state.direction;
-
-        var module = ['topLeft', 'topRight', 'bottomLeft', 'bottomRight'];
-        var position = {};
-        if (event.type.indexOf('mouse') >= 0) {
-          position = _this.calculatePosition(event, direction, true);
-        } else {
-          position = _this.calculatePosition(event, direction, false);
-        }
-        _this.setState({
-          x: position.deltaX,
-          y: position.deltaY
-        });
-        _this.styleChange(direction, 'dragStart');
-      }
-    });
-    Object.defineProperty(_this, 'onDragStart', {
-      enumerable: true,
-      writable: true,
-      value: function value(event, direction) {
-        document.body.style.userSelect = 'none';
-        event.preventDefault();
-        event.stopPropagation();
-        if (isNaN(Number(event.button)) || Number(event.button) !== 0) {
-          return;
-        }
-        _this.checkDocument();
-        if (event.type.indexOf('mouse') >= 0) {
-          document.addEventListener('mousemove', _this.move);
-          document.addEventListener('mouseup', _this.onDragEnd);
-        } else {
-          document.addEventListener('touchmove', _this.move);
-          document.addEventListener('touchend', _this.onDragEnd);
-        }
-        if (_this.props.onDragStart) {
-          _this.props.onDragStart(_this.state.x, _this.state.y);
-        }
-        var originX = void 0,
-            originY = void 0;
-        if (event.type.indexOf('mouse') >= 0) {
-          originX = event.clientX;
-          originY = event.clientY;
-        } else {
-          originX = event.touches[0].clientX;
-          originY = event.touches[0].clientY;
-        }
-        var bgImgStyle = _this.state.bgImgStyle;
-
-        _this.setState({
-          originX: originX,
-          originY: originY,
-          lastX: _this.state.x,
-          lastY: _this.state.y,
-          zIndex: 10,
-          direction: direction,
-          bgImgStyle: (0, _extends3.default)({}, bgImgStyle, {
-            opacity: 0.2
-          })
-        });
-      }
-    });
-    Object.defineProperty(_this, 'onDragEnd', {
-      enumerable: true,
-      writable: true,
-      value: function value(event, direction) {
-        document.body.style.userSelect = '';
-        event.preventDefault();
-        event.stopPropagation();
-        if (isNaN(Number(event.button)) || Number(event.button) !== 0) {
-          return;
-        }
-        _this.checkDocument();
-        if (event.type.indexOf('mouse') >= 0) {
-          document.removeEventListener('mousemove', _this.move);
-          document.removeEventListener('mouseup', _this.onDragEnd);
-        } else {
-          document.removeEventListener('touchmove', _this.move);
-          document.removeEventListener('touchend', _this.onDragEnd);
-        }
-        var bgImgStyle = _this.state.bgImgStyle;
-
-        _this.setState({
-          zIndex: 1,
-          bgImgStyle: (0, _extends3.default)({}, bgImgStyle, {
-            opacity: 0
-          })
-        });
-        _this.styleChange(direction, 'dragEnd');
-        if (_this.props.onDragEnd) {
-          _this.props.onDragEnd(event, _this.state.x, _this.state.y);
-        }
-      }
-    });
-    Object.defineProperty(_this, 'styleChange', {
-      enumerable: true,
-      writable: true,
-      value: function value(direction, dragStatus) {
-        var _this$state2 = _this.state,
-            x = _this$state2.x,
-            y = _this$state2.y,
-            zIndex = _this$state2.zIndex,
-            bgImgStyle = _this$state2.bgImgStyle;
-
-        var isMove = dragStatus === 'dragStart';
-        var imgStyle = _this.props.imgStyle;
-
-        var style = {
-          width: imgStyle.width + x,
-          height: imgStyle.height + y,
-          isMove: isMove,
-          zIndex: zIndex,
-          top: ['topLeft', 'topRight'].includes(direction) && isMove ? 'auto' : 0,
-          bottom: ['bottomLeft', 'bottomRight'].includes(direction) && isMove ? 'auto' : 0,
-          right: ['topRight', 'bottomRight'].includes(direction) && isMove ? 'auto' : 0,
-          left: ['topLeft', 'bottomLeft'].includes(direction) && isMove ? 'auto' : 0
-        };
-        _this.setState({
-          imgStyle: (0, _extends3.default)({}, style)
-        });
-        if (_this.props.onStyleChange && typeof _this.props.onStyleChange === 'function') {
-          _this.props.onStyleChange(style);
-        }
-      }
-    });
-    Object.defineProperty(_this, 'renderDragPoint', {
-      enumerable: true,
-      writable: true,
-      value: function value(direction) {
-        var pointStyle = _this.state.pointStyle;
-        var toolBar = _this.props.toolBar;
-
-        var directionPoint = {
-          topLeft: _this.props.dragPoint.topLeftPoint,
-          topRight: _this.props.dragPoint.topRightPoint,
-          bottomLeft: _this.props.dragPoint.bottomLeftPoint,
-          bottomRight: _this.props.dragPoint.bottomRightPoint
-        };
-        var pointMove = -4;
-        var attPoint = directionPoint[direction];
-        if (!attPoint || !toolBar.isFocus) {
-          return;
-        }
-        var _pointStyle = (0, _assign2.default)({}, pointStyle);
-        var pointSize = (0, _extends3.default)({}, _pointStyle, {
-          width: attPoint.width || 10,
-          height: attPoint.height || 10
-        });
-        var position = {
-          topLeft: (0, _extends3.default)({}, pointSize, {
-            left: attPoint.left || pointMove,
-            top: attPoint.top || pointMove,
-            cursor: attPoint.cursor || 'nw-resize'
-          }),
-          topRight: (0, _extends3.default)({}, pointSize, {
-            right: attPoint.right || pointMove,
-            top: attPoint.top || pointMove,
-            cursor: attPoint.cursor || 'ne-resize'
-          }),
-          bottomLeft: (0, _extends3.default)({}, pointSize, {
-            left: attPoint.left || pointMove,
-            bottom: attPoint.bottom || pointMove,
-            cursor: attPoint.cursor || 'sw-resize'
-          }),
-          bottomRight: (0, _extends3.default)({}, pointSize, {
-            right: attPoint.right || pointMove,
-            bottom: attPoint.bottom || pointMove,
-            cursor: attPoint.cursor || 'se-resize'
-          })
-        };
-        var pointBtnProps = {
-          onMouseDown: function onMouseDown(event) {
-            return _this.onDragStart(event, direction);
-          },
-          onTouchStart: function onTouchStart(event) {
-            return _this.onDragStart(event, direction);
-          },
-          onTouchEnd: function onTouchEnd(event) {
-            return _this.onDragEnd(event, direction);
-          },
-          onMouseUp: function onMouseUp(event) {
-            return _this.onDragEnd(event, direction);
-          }
-        };
-        return _react2.default.createElement('span', (0, _extends3.default)({}, pointBtnProps, { style: position[direction] }));
-      }
-    });
+    _initialiseProps.call(_this);
 
     _this.state = {
       x: 0,
@@ -2815,7 +2666,14 @@ var Drag = function (_React$Component) {
   (0, _createClass3.default)(Drag, [{
     key: 'componentWillMount',
     value: function componentWillMount() {
-      this.initDragPoint();
+      this.changeDragPoint();
+    }
+  }, {
+    key: 'componentWillUpdate',
+    value: function componentWillUpdate(newProps) {
+      if (this.props.imgStyle !== newProps.imgStyle) {
+        this.changeDragPoint(newProps);
+      }
     }
   }, {
     key: 'render',
@@ -2850,7 +2708,264 @@ var Drag = function (_React$Component) {
     }
   }]);
   return Drag;
-}(_react2.default.Component);
+}(_react2.default.Component), _initialiseProps = function _initialiseProps() {
+  var _this2 = this;
+
+  Object.defineProperty(this, 'changeDragPoint', {
+    enumerable: true,
+    writable: true,
+    value: function value(props) {
+      var _props = props || _this2.props;
+      var pointStyle = _this2.state.pointStyle;
+      var style = _props.dragPoint.style;
+      var imgStyle = _props.imgStyle;
+
+      _this2.setState({
+        pointStyle: (0, _extends3.default)({}, pointStyle, style),
+        imgStyle: (0, _extends3.default)({}, imgStyle)
+      });
+    }
+  });
+  Object.defineProperty(this, 'checkDocument', {
+    enumerable: true,
+    writable: true,
+    value: function value() {
+      if (!document) {
+        console.error('没能获取到 window.document 对象');
+        return;
+      }
+    }
+  });
+  Object.defineProperty(this, 'calculatePosition', {
+    enumerable: true,
+    writable: true,
+    value: function value(event, direction, isMouse) {
+      var _state2 = _this2.state,
+          lastX = _state2.lastX,
+          lastY = _state2.lastY;
+
+      var deltaX = void 0,
+          deltaY = void 0;
+      var clientX = isMouse ? event.clientX : event.touches[0].clientX;
+      var clientY = isMouse ? event.clientY : event.touches[0].clientY;
+      switch (direction) {
+        case 'topLeft':
+          deltaX = _this2.state.originX - clientX + lastX;
+          deltaY = _this2.state.originY - clientY + lastY;
+          break;
+        case 'topRight':
+          deltaX = clientX - _this2.state.originX + lastX;
+          deltaY = _this2.state.originY - clientY + lastY;
+          break;
+        case 'bottomLeft':
+          deltaX = _this2.state.originX - clientX + lastX;
+          deltaY = clientY - _this2.state.originY + lastY;
+          break;
+        case 'bottomRight':
+          deltaX = clientX - _this2.state.originX + lastX;
+          deltaY = clientY - _this2.state.originY + lastY;
+          break;
+        default:
+          break;
+      }
+      return {
+        deltaX: deltaX,
+        deltaY: deltaY
+      };
+    }
+  });
+  Object.defineProperty(this, 'move', {
+    enumerable: true,
+    writable: true,
+    value: function value(event) {
+      var direction = _this2.state.direction;
+
+      var module = ['topLeft', 'topRight', 'bottomLeft', 'bottomRight'];
+      var position = {};
+      if (event.type.indexOf('mouse') >= 0) {
+        position = _this2.calculatePosition(event, direction, true);
+      } else {
+        position = _this2.calculatePosition(event, direction, false);
+      }
+      _this2.setState({
+        x: position.deltaX,
+        y: position.deltaY
+      });
+      _this2.styleChange(direction, 'dragStart');
+    }
+  });
+  Object.defineProperty(this, 'onDragStart', {
+    enumerable: true,
+    writable: true,
+    value: function value(event, direction) {
+      document.body.style.userSelect = 'none';
+      event.preventDefault();
+      event.stopPropagation();
+      if (isNaN(Number(event.button)) || Number(event.button) !== 0) {
+        return;
+      }
+      _this2.checkDocument();
+      if (event.type.indexOf('mouse') >= 0) {
+        document.addEventListener('mousemove', _this2.move);
+        document.addEventListener('mouseup', _this2.onDragEnd);
+      } else {
+        document.addEventListener('touchmove', _this2.move);
+        document.addEventListener('touchend', _this2.onDragEnd);
+      }
+      if (_this2.props.onDragStart) {
+        _this2.props.onDragStart(_this2.state.x, _this2.state.y);
+      }
+      var originX = void 0,
+          originY = void 0;
+      if (event.type.indexOf('mouse') >= 0) {
+        originX = event.clientX;
+        originY = event.clientY;
+      } else {
+        originX = event.touches[0].clientX;
+        originY = event.touches[0].clientY;
+      }
+      var bgImgStyle = _this2.state.bgImgStyle;
+
+      _this2.setState({
+        originX: originX,
+        originY: originY,
+        lastX: _this2.state.x,
+        lastY: _this2.state.y,
+        zIndex: 10,
+        direction: direction,
+        bgImgStyle: (0, _extends3.default)({}, bgImgStyle, {
+          opacity: 0.2
+        })
+      });
+    }
+  });
+  Object.defineProperty(this, 'onDragEnd', {
+    enumerable: true,
+    writable: true,
+    value: function value(event, direction) {
+      document.body.style.userSelect = '';
+      event.preventDefault();
+      event.stopPropagation();
+      if (isNaN(Number(event.button)) || Number(event.button) !== 0) {
+        return;
+      }
+      _this2.checkDocument();
+      if (event.type.indexOf('mouse') >= 0) {
+        document.removeEventListener('mousemove', _this2.move);
+        document.removeEventListener('mouseup', _this2.onDragEnd);
+      } else {
+        document.removeEventListener('touchmove', _this2.move);
+        document.removeEventListener('touchend', _this2.onDragEnd);
+      }
+      var bgImgStyle = _this2.state.bgImgStyle;
+
+      _this2.setState({
+        zIndex: 1,
+        bgImgStyle: (0, _extends3.default)({}, bgImgStyle, {
+          opacity: 0
+        })
+      });
+      _this2.styleChange(direction, 'dragEnd');
+      if (_this2.props.onDragEnd) {
+        _this2.props.onDragEnd(event, _this2.state.x, _this2.state.y);
+      }
+    }
+  });
+  Object.defineProperty(this, 'styleChange', {
+    enumerable: true,
+    writable: true,
+    value: function value(direction, dragStatus) {
+      var _state3 = _this2.state,
+          x = _state3.x,
+          y = _state3.y,
+          zIndex = _state3.zIndex,
+          bgImgStyle = _state3.bgImgStyle;
+
+      var isMove = dragStatus === 'dragStart';
+      var imgStyle = _this2.props.imgStyle;
+
+      var style = {
+        width: imgStyle.width + x,
+        height: imgStyle.height + y,
+        isMove: isMove,
+        zIndex: zIndex,
+        top: ['topLeft', 'topRight'].includes(direction) && isMove ? 'auto' : 0,
+        bottom: ['bottomLeft', 'bottomRight'].includes(direction) && isMove ? 'auto' : 0,
+        right: ['topRight', 'bottomRight'].includes(direction) && isMove ? 'auto' : 0,
+        left: ['topLeft', 'bottomLeft'].includes(direction) && isMove ? 'auto' : 0
+      };
+      _this2.setState({
+        imgStyle: (0, _extends3.default)({}, style)
+      });
+      if (_this2.props.onStyleChange && typeof _this2.props.onStyleChange === 'function') {
+        _this2.props.onStyleChange(style);
+      }
+    }
+  });
+  Object.defineProperty(this, 'renderDragPoint', {
+    enumerable: true,
+    writable: true,
+    value: function value(direction) {
+      var pointStyle = _this2.state.pointStyle;
+      var toolBar = _this2.props.toolBar;
+
+      var directionPoint = {
+        topLeft: _this2.props.dragPoint.topLeftPoint,
+        topRight: _this2.props.dragPoint.topRightPoint,
+        bottomLeft: _this2.props.dragPoint.bottomLeftPoint,
+        bottomRight: _this2.props.dragPoint.bottomRightPoint
+      };
+      var pointMove = -4;
+      var attPoint = directionPoint[direction];
+      var isShow = toolBar.isShow || toolBar.isFocus;
+      if (!attPoint || !isShow) {
+        return;
+      }
+      var _pointStyle = (0, _assign2.default)({}, pointStyle);
+      var pointSize = (0, _extends3.default)({}, _pointStyle, {
+        width: attPoint.width || 10,
+        height: attPoint.height || 10
+      });
+      var position = {
+        topLeft: (0, _extends3.default)({}, pointSize, {
+          left: attPoint.left || pointMove,
+          top: attPoint.top || pointMove,
+          cursor: attPoint.cursor || 'nw-resize'
+        }),
+        topRight: (0, _extends3.default)({}, pointSize, {
+          right: attPoint.right || pointMove,
+          top: attPoint.top || pointMove,
+          cursor: attPoint.cursor || 'ne-resize'
+        }),
+        bottomLeft: (0, _extends3.default)({}, pointSize, {
+          left: attPoint.left || pointMove,
+          bottom: attPoint.bottom || pointMove,
+          cursor: attPoint.cursor || 'sw-resize'
+        }),
+        bottomRight: (0, _extends3.default)({}, pointSize, {
+          right: attPoint.right || pointMove,
+          bottom: attPoint.bottom || pointMove,
+          cursor: attPoint.cursor || 'se-resize'
+        })
+      };
+      var pointBtnProps = {
+        onMouseDown: function onMouseDown(event) {
+          return _this2.onDragStart(event, direction);
+        },
+        onTouchStart: function onTouchStart(event) {
+          return _this2.onDragStart(event, direction);
+        },
+        onTouchEnd: function onTouchEnd(event) {
+          return _this2.onDragEnd(event, direction);
+        },
+        onMouseUp: function onMouseUp(event) {
+          return _this2.onDragEnd(event, direction);
+        }
+      };
+      return _react2.default.createElement('span', (0, _extends3.default)({}, pointBtnProps, { style: position[direction] }));
+    }
+  });
+}, _temp);
 
 Drag.defaultProps = {
   imgStyle: {
@@ -2943,15 +3058,22 @@ var ImageDrag = function (_React$Component) {
         blockStyle: {},
         markStyle: {},
         imageInfo: {},
-        imgStatus: ''
+        imgStatus: '',
+        renderTool: null
       }
     }), Object.defineProperty(_this, 'init', {
       enumerable: true,
       writable: true,
       value: function value() {
         _this.initImage();
-        _this.initToolBar();
         _this.initDragPoint();
+        _this.initToolBar();
+      }
+    }), Object.defineProperty(_this, 'update', {
+      enumerable: true,
+      writable: true,
+      value: function value(props) {
+        _this.updateToolBar(props);
       }
     }), Object.defineProperty(_this, 'initImage', {
       enumerable: true,
@@ -2984,26 +3106,6 @@ var ImageDrag = function (_React$Component) {
           }
         });
       }
-    }), Object.defineProperty(_this, 'initToolBar', {
-      enumerable: true,
-      writable: true,
-      value: function value() {
-        var _this$props2 = _this.props,
-            children = _this$props2.children,
-            toolBar = _this$props2.toolBar,
-            image = _this$props2.image;
-
-        var imgStatus = '';
-        if (children) {
-          imgStatus = toolBar.isBlock ? _static2.default.BlockChildren : _static2.default.MarkChildren;
-        } else {
-          imgStatus = toolBar.isBlock ? _static2.default.BlockImage : _static2.default.MarkImage;
-        }
-        _this.setState({
-          toolBar: (0, _extends3.default)({}, toolBar),
-          imgStatus: imgStatus
-        });
-      }
     }), Object.defineProperty(_this, 'initDragPoint', {
       enumerable: true,
       writable: true,
@@ -3011,7 +3113,71 @@ var ImageDrag = function (_React$Component) {
         var dragPoint = _this.props.dragPoint;
 
         _this.setState({
-          dragPoint: (0, _extends3.default)({}, dragPoint)
+          dragPoint: (0, _extends3.default)({
+            topLeftPoint: {},
+            topRightPoint: {},
+            bottomLeftPoint: {},
+            bottomRightPoint: {},
+            style: {}
+          }, dragPoint)
+        });
+      }
+    }), Object.defineProperty(_this, 'initToolBar', {
+      enumerable: true,
+      writable: true,
+      value: function value(props) {
+        var _this$props2 = _this.props,
+            children = _this$props2.children,
+            toolBar = _this$props2.toolBar,
+            image = _this$props2.image,
+            renderTool = _this$props2.renderTool;
+
+        var imgStatus = '';
+        var _toolBar = (0, _extends3.default)({
+          top: 0,
+          bottom: 0,
+          left: 0,
+          right: 0,
+          isUse: true,
+          isFocus: false,
+          isBlock: true,
+          isShow: false,
+          render: null, // 支持接收一个函数，并返回一个dom元素  function() {return <Dom />}
+          sizeChange: _this.onSizeChange,
+          dragStyle: {}
+        }, toolBar);
+        if (children) {
+          imgStatus = _toolBar.isBlock ? _static2.default.BlockChildren : _static2.default.MarkChildren;
+        } else {
+          imgStatus = _toolBar.isBlock ? _static2.default.BlockImage : _static2.default.MarkImage;
+        }
+        _this.setState({
+          toolBar: _toolBar,
+          imgStatus: imgStatus,
+          renderTool: renderTool || null
+        });
+      }
+    }), Object.defineProperty(_this, 'updateToolBar', {
+      enumerable: true,
+      writable: true,
+      value: function value(props) {
+        var _ref2 = props || _this.props,
+            children = _ref2.children,
+            toolBar = _ref2.toolBar,
+            image = _ref2.image;
+
+        var stateToolBar = _this.state.toolBar;
+        var dragStyle = _this.state.dragStyle;
+
+        var _toolBar = (0, _extends3.default)({}, stateToolBar, toolBar);
+        var toolBarDragStyle = _toolBar.dragStyle;
+        var _dragStyle = (0, _extends3.default)({}, dragStyle, {
+          width: _toolBar.width,
+          height: _toolBar.height
+        });
+        _this.setState({
+          toolBar: _toolBar,
+          dragStyle: _dragStyle
         });
       }
     }), Object.defineProperty(_this, 'handleStyleChange', {
@@ -3019,6 +3185,22 @@ var ImageDrag = function (_React$Component) {
       writable: true,
       value: function value(style) {
         _this.setState({ dragStyle: style });
+      }
+    }), Object.defineProperty(_this, 'onSizeChange', {
+      enumerable: true,
+      writable: true,
+      value: function value(event) {
+        var _this$state = _this.state,
+            dragStyle = _this$state.dragStyle,
+            imgStyle = _this$state.imgStyle;
+
+        _this.setState({
+          imgStyle: (0, _extends3.default)({}, imgStyle, {
+            width: dragStyle.width || imgStyle.width,
+            height: dragStyle.height || imgStyle.height
+          })
+        });
+        _this.onModifyImageStyle();
       }
     }), Object.defineProperty(_this, 'renderImage', {
       enumerable: true,
@@ -3028,12 +3210,12 @@ var ImageDrag = function (_React$Component) {
             children = _this$props3.children,
             width = _this$props3.width,
             image = _this$props3.image;
-        var _this$state = _this.state,
-            imgStatus = _this$state.imgStatus,
-            imgStyle = _this$state.imgStyle,
-            imageInfo = _this$state.imageInfo,
-            blockStyle = _this$state.blockStyle,
-            markStyle = _this$state.markStyle;
+        var _this$state2 = _this.state,
+            imgStatus = _this$state2.imgStatus,
+            imgStyle = _this$state2.imgStyle,
+            imageInfo = _this$state2.imageInfo,
+            blockStyle = _this$state2.blockStyle,
+            markStyle = _this$state2.markStyle;
         var attr = imageInfo.attr,
             title = imageInfo.title;
 
@@ -3070,18 +3252,19 @@ var ImageDrag = function (_React$Component) {
       enumerable: true,
       writable: true,
       value: function value() {
-        var _this$state2 = _this.state,
-            toolBar = _this$state2.toolBar,
-            dragStyle = _this$state2.dragStyle,
-            imgStyle = _this$state2.imgStyle;
+        var _this$state3 = _this.state,
+            toolBar = _this$state3.toolBar,
+            dragStyle = _this$state3.dragStyle,
+            imgStyle = _this$state3.imgStyle,
+            renderTool = _this$state3.renderTool;
 
-        var isShowToolBar = toolBar.isUse && toolBar.isFocus;
-        if (toolBar.render && typeof toolBar.render === 'function') {
+        var isShowToolBar = toolBar.isUse && (toolBar.isShow || toolBar.isFocus);
+        if (renderTool && typeof renderTool === 'function') {
           var toolInfo = (0, _extends3.default)({}, toolBar, {
             width: dragStyle.width || imgStyle.width,
             height: dragStyle.height || imgStyle.height
           });
-          return toolBar.render(toolInfo);
+          return renderTool(toolInfo);
         }
         var toolBarStyle = {
           position: 'absolute'
@@ -3145,9 +3328,10 @@ var ImageDrag = function (_React$Component) {
       enumerable: true,
       writable: true,
       value: function value() {
-        var _this$state3 = _this.state,
-            imgStatus = _this$state3.imgStatus,
-            dragStyle = _this$state3.dragStyle;
+        var _this$state4 = _this.state,
+            imgStatus = _this$state4.imgStatus,
+            dragStyle = _this$state4.dragStyle,
+            imgStyle = _this$state4.imgStyle;
         // 阻止首次加载时dragStyle无值，导致图片异常
 
         if ((0, _keys2.default)(dragStyle).length === 0) {
@@ -3158,8 +3342,8 @@ var ImageDrag = function (_React$Component) {
           case _static2.default.BlockImage:
             _this.setState({
               blockStyle: {
-                width: dragStyle.width,
-                height: dragStyle.height
+                width: dragStyle.width || imgStyle.width,
+                height: dragStyle.height || imgStyle.height
               }
             });
             break;
@@ -3167,8 +3351,8 @@ var ImageDrag = function (_React$Component) {
           case _static2.default.MarkImage:
             _this.setState({
               markStyle: {
-                width: dragStyle.width,
-                height: dragStyle.height
+                width: dragStyle.width || imgStyle.width,
+                height: dragStyle.height || imgStyle.height
               }
             });
             break;
@@ -3199,6 +3383,13 @@ var ImageDrag = function (_React$Component) {
     key: 'componentWillMount',
     value: function componentWillMount() {
       this.init();
+    }
+  }, {
+    key: 'componentWillUpdate',
+    value: function componentWillUpdate(newProps) {
+      if (this.props.toolBar !== newProps.toolBar) {
+        this.update(newProps);
+      }
     }
   }, {
     key: 'render',
@@ -3255,23 +3446,6 @@ ImageDrag.defaultProps = {
   imgStyle: {
     width: 600,
     height: 400
-  },
-  toolBar: {
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    isUse: true,
-    isFocus: false,
-    isBlock: true,
-    render: null // 支持接收一个函数，并返回一个dom元素  function() {return <Dom />}
-  },
-  dragPoint: {
-    topLeftPoint: {},
-    topRightPoint: {},
-    bottomLeftPoint: {},
-    bottomRightPoint: {},
-    style: {}
   }
 };
 

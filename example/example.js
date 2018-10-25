@@ -6,6 +6,9 @@ const imgSrc = 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&
 export default class Example extends Component {
   state = {
     style: {},
+    isShow: false,
+    isUse: true,
+    toolBar: {}
   }
   dragStart = (style) => {
     this.setState({
@@ -21,11 +24,61 @@ export default class Example extends Component {
       dragStart: false,
     });
   }
+  onChangePoint = () => {
+    const { isShow } = this.state;
+    this.setState({isShow: !isShow});
+  }
+  onChangeToolbar = () => {
+    const { isUse } = this.state;
+    this.setState({isUse: !isUse});
+  }
+  onInputWidthChange = (event) => {
+    const { toolBar } = this.state;
+    toolBar.width = isNaN(Number(event.target.value)) ? dragStyle.width : Number(event.target.value);
+    this.setState({
+      toolBar
+    });
+  }
+  onInputHeightChange = (event) => {
+    const { toolBar } = this.state;
+    toolBar.height = isNaN(Number(event.target.value)) ? dragStyle.width : Number(event.target.value);
+    this.setState({
+      toolBar
+    });
+  }
   render() {
+    const { isShow, isUse, toolBar } = this.state;
+    const self = this;
+    const dragRenderProps = {
+      width: 600,
+      image: imgSrc,
+      onDragEnd: this.onDragEnd,
+      toolBar: {
+        ...toolBar,
+        isShow,
+        isUse,
+      },
+      renderTool(toolInfo) {
+        if (!toolInfo.isUse || !toolInfo.isShow) {
+          return;
+        }
+        return (
+          <div style={{position: 'absolute'}}>
+            width: <span><input onChange={self.onInputWidthChange} value={toolInfo.width} /></span>
+            height: <span><input onChange={self.onInputHeightChange} value={toolInfo.height} /></span>
+            <button onClick={toolInfo.sizeChange}>修改尺寸</button>
+          </div>
+        );
+      }
+    }
     const dragProps = {
       width: 600,
       image: imgSrc,
       onDragEnd: this.onDragEnd,
+      toolBar: {
+        isShow,
+        isUse
+      }
     }
     const wrapStyle = {
       width: 1200,
@@ -35,8 +88,10 @@ export default class Example extends Component {
     return (
       <div>
         <div style={wrapStyle}>
+          <button onClick={this.onChangePoint}>{isShow ? 'HIDE' : 'SHOW'}</button>
+          <button onClick={this.onChangeToolbar}>{isUse ? 'HIDE-TOOLBAR' : 'SHOW-TOOLBAR'}</button>
           <h1>子元素</h1>
-          <ImageDrag {...dragProps}>
+          <ImageDrag {...dragRenderProps}>
             <img style={{
                 width: '100%',
                 height: '100%'

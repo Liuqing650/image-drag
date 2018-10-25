@@ -12,14 +12,23 @@ class ImageDrag extends React.Component {
     markStyle: {},
     imageInfo: {},
     imgStatus: '',
+    renderTool: null,
   }
   componentWillMount() {
     this.init();
   }
+  componentWillUpdate(newProps) {
+    if (this.props.toolBar !== newProps.toolBar) {
+      this.update(newProps);
+    }
+  }
   init = () => {
     this.initImage();
-    this.initToolBar();
     this.initDragPoint();
+    this.initToolBar();
+  }
+  update = (props) => {
+    this.updateToolBar(props);
   }
   initImage = () => {
     const { width, height, imgStyle, attr, title } = this.props;
@@ -48,27 +57,79 @@ class ImageDrag extends React.Component {
       }
     });
   }
-  initToolBar = () => {
-    const { children, toolBar, image } = this.props;
-    let imgStatus = '';
-    if (children) {
-      imgStatus = toolBar.isBlock ? opt.BlockChildren : opt.MarkChildren;
-    } else {
-      imgStatus = toolBar.isBlock ? opt.BlockImage : opt.MarkImage;
-    }
-    this.setState({
-      toolBar: {...toolBar},
-      imgStatus
-    });
-  }
   initDragPoint = () => {
     const { dragPoint } = this.props;
     this.setState({
-      dragPoint: {...dragPoint}
+      dragPoint: {
+        topLeftPoint: {},
+        topRightPoint: {},
+        bottomLeftPoint: {},
+        bottomRightPoint: {},
+        style: {},
+        ...dragPoint
+      }
+    });
+  }
+  initToolBar = (props) => {
+    const { children, toolBar, image, renderTool } = this.props;
+    let imgStatus = '';
+    const _toolBar = {
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0,
+      isUse: true,
+      isFocus: false,
+      isBlock: true,
+      isShow: false,
+      render: null, // 支持接收一个函数，并返回一个dom元素  function() {return <Dom />}
+      sizeChange: this.onSizeChange,
+      dragStyle: {},
+      ...toolBar
+    };
+    if (children) {
+      imgStatus = _toolBar.isBlock ? opt.BlockChildren : opt.MarkChildren;
+    } else {
+      imgStatus = _toolBar.isBlock ? opt.BlockImage : opt.MarkImage;
+    }
+    this.setState({
+      toolBar: _toolBar,
+      imgStatus,
+      renderTool: renderTool || null
+    });
+  }
+  updateToolBar = (props) => {
+    const { children, toolBar, image } = props || this.props;
+    const stateToolBar = this.state.toolBar;
+    const { dragStyle } = this.state;
+    const _toolBar = {
+      ...stateToolBar,
+      ...toolBar
+    };
+    const toolBarDragStyle = _toolBar.dragStyle;
+    const _dragStyle = {
+      ...dragStyle,
+      width: _toolBar.width,
+      height: _toolBar.height,
+    };
+    this.setState({
+      toolBar: _toolBar,
+      dragStyle: _dragStyle,
     });
   }
   handleStyleChange = (style) => {
     this.setState({dragStyle: style});
+  }
+  onSizeChange = (event) => {
+    const { dragStyle, imgStyle } = this.state;
+    this.setState({
+      imgStyle: {
+        ...imgStyle,
+        width: dragStyle.width || imgStyle.width,
+        height: dragStyle.height || imgStyle.height,
+      }
+    });
+    this.onModifyImageStyle();
   }
   renderImage = () => {
     const { children, width, image } = this.props;
@@ -88,15 +149,15 @@ class ImageDrag extends React.Component {
     }
   }
   renderToolBar = () => {
-    const { toolBar, dragStyle, imgStyle } = this.state;
-    const isShowToolBar = toolBar.isUse && toolBar.isFocus;
-    if (toolBar.render && typeof toolBar.render === 'function') {
+    const { toolBar, dragStyle, imgStyle, renderTool } = this.state;
+    const isShowToolBar = toolBar.isUse && (toolBar.isShow || toolBar.isFocus);
+    if (renderTool && typeof renderTool === 'function') {
       const toolInfo = {
         ...toolBar,
         width: dragStyle.width || imgStyle.width,
-        height: dragStyle.height || imgStyle.height
+        height: dragStyle.height || imgStyle.height,
       };
-      return toolBar.render(toolInfo);
+      return renderTool(toolInfo);
     }
     const toolBarStyle = {
       position: 'absolute',
@@ -142,7 +203,7 @@ class ImageDrag extends React.Component {
     });
   }
   onModifyImageStyle = () => {
-    const { imgStatus, dragStyle } = this.state;
+    const { imgStatus, dragStyle, imgStyle } = this.state;
     // 阻止首次加载时dragStyle无值，导致图片异常
     if (Object.keys(dragStyle).length === 0) {
       return;
@@ -152,8 +213,8 @@ class ImageDrag extends React.Component {
       case opt.BlockImage:
         this.setState({
           blockStyle: {
-            width: dragStyle.width,
-            height: dragStyle.height,
+            width: dragStyle.width || imgStyle.width,
+            height: dragStyle.height || imgStyle.height,
           }
         });
         break;
@@ -161,8 +222,8 @@ class ImageDrag extends React.Component {
       case opt.MarkImage:
         this.setState({
           markStyle: {
-            width: dragStyle.width,
-            height: dragStyle.height,
+            width: dragStyle.width || imgStyle.width,
+            height: dragStyle.height || imgStyle.height,
           }
         });
         break;
@@ -219,23 +280,6 @@ ImageDrag.defaultProps={
   imgStyle: {
     width: 600,
     height: 400
-  },
-  toolBar: {
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    isUse: true,
-    isFocus: false,
-    isBlock: true,
-    render: null, // 支持接收一个函数，并返回一个dom元素  function() {return <Dom />}
-  },
-  dragPoint: {
-    topLeftPoint: {},
-    topRightPoint: {},
-    bottomLeftPoint: {},
-    bottomRightPoint: {},
-    style: {},
   }
 };
 
