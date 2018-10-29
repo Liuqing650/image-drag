@@ -4,9 +4,9 @@ import opt from './static';
 
 class ImageDrag extends React.Component {
   state = {
-    dragStyle: {},
-    imgStyle: {},
-    toolBar: {},
+    dragStyle: {},                    // 内存中的计算值，用作缓冲
+    imgStyle: {},                     // 决定拖拽锚点的位置以及真实图片的样式
+    toolBar: {},                      // 信息携带者
     dragPoint: {},
     blockStyle: {},
     markStyle: {},
@@ -83,7 +83,7 @@ class ImageDrag extends React.Component {
       isBlock: true,
       isShow: false,
       render: null, // 支持接收一个函数，并返回一个dom元素  function() {return <Dom />}
-      sizeChange: this.onSizeChange,
+      changeSize: this.onChangeSize,
       dragStyle: {},
       ...toolBar
     };
@@ -97,6 +97,7 @@ class ImageDrag extends React.Component {
       imgStatus,
       renderTool: renderTool || null
     });
+    this.reload(_toolBar, 'init');
   }
   updateToolBar = (props) => {
     const { children, toolBar, image } = props || this.props;
@@ -116,23 +117,37 @@ class ImageDrag extends React.Component {
       toolBar: _toolBar,
       dragStyle: _dragStyle,
     });
+    this.reload(_toolBar, 'update');
   }
+  // 事件完成后回调信息
+  reload = (info, status) => {
+    if (this.props.reload) {
+      this.props.reload(info, status);
+    }
+  };
   handleStyleChange = (style) => {
     this.setState({dragStyle: style});
     if (this.props.onDragging) {
       this.props.onDragging(style);
     }
   }
-  onSizeChange = (event) => {
+  onChangeSize = (width, height) => {
     const { dragStyle, imgStyle } = this.state;
+    const newSize = {
+      width: width || imgStyle.width,
+      height: height || imgStyle.height,
+    };
     this.setState({
+      dragStyle: {
+        ...dragStyle,
+        ...newSize
+      },
       imgStyle: {
         ...imgStyle,
-        width: dragStyle.width || imgStyle.width,
-        height: dragStyle.height || imgStyle.height,
+        ...newSize
       }
     });
-    this.onModifyImageStyle();
+    this.onModifyImageStyle(width, height);
   }
   renderImage = () => {
     const { children, width, image } = this.props;
@@ -205,30 +220,21 @@ class ImageDrag extends React.Component {
       }
     });
   }
-  onModifyImageStyle = () => {
-    const { imgStatus, dragStyle, imgStyle } = this.state;
-    // 阻止首次加载时dragStyle无值，导致图片异常
-    if (Object.keys(dragStyle).length === 0) {
-      return;
-    }
+  onModifyImageStyle = (width, height) => {
+    // imgStyle 保留初始值
+    const { imgStatus, imgStyle } = this.state;
+    const style = {
+      width: width || imgStyle.width,
+      height: height || imgStyle.height,
+    };
     switch (imgStatus) {
       case opt.BlockChildren:
       case opt.BlockImage:
-        this.setState({
-          blockStyle: {
-            width: dragStyle.width || imgStyle.width,
-            height: dragStyle.height || imgStyle.height,
-          }
-        });
+        this.setState({ blockStyle: style });
         break;
       case opt.MarkChildren:
       case opt.MarkImage:
-        this.setState({
-          markStyle: {
-            width: dragStyle.width || imgStyle.width,
-            height: dragStyle.height || imgStyle.height,
-          }
-        });
+        this.setState({ markStyle: style });
         break;
       default:
         break;
@@ -246,28 +252,28 @@ class ImageDrag extends React.Component {
     }
   }
   onDragEnd = (even, style) => {
-    this.onModifyImageStyle();
+    const { toolBar, dragStyle, imgStyle } = this.state;
+    const width = dragStyle.width || imgStyle.width;
+    const height = dragStyle.height || imgStyle.height;
+    const toolInfo = {
+      ...toolBar,
+      width,
+      height
+    };
+    this.onModifyImageStyle(width, height);
     if (this.props.onDragEnd) {
-      const { toolBar, dragStyle, imgStyle } = this.state;
-      const toolInfo = {
-        ...toolBar,
-        width: dragStyle.width || imgStyle.width,
-        height: dragStyle.height || imgStyle.height
-      };
       this.props.onDragEnd(toolInfo, even, style);
     }
+    this.reload(toolInfo, 'dragEnd');
   }
   render() {
-    const { dragStyle, imgStyle, toolBar, imgStatus, dragPoint } = this.state;
+    const { imgStyle, toolBar, imgStatus, dragPoint } = this.state;
     const { children, width, onDragStart, onDragEnd, image, tabIndex } = this.props;
-    const margin = [5, 5];
     const dragProps = {
       padding: 0,
-      margin: margin,
       imgStatus: imgStatus,
       bgImg: image,
       toolBar: toolBar,
-      dragStyle: dragStyle,
       imgStyle: imgStyle,
       dragPoint: dragPoint,
       onStyleChange: this.handleStyleChange,

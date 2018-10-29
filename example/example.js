@@ -9,7 +9,8 @@ export default class Example extends Component {
     isShow: false,
     isUse: true,
     isLog: false,
-    toolBar: {}
+    width: 0,
+    height: 0
   }
   dragStart = (toolInfo) => {
     if (!this.state.isLog) {
@@ -42,21 +43,25 @@ export default class Example extends Component {
     this.setState({isLog: !isLog});
   }
   onInputWidthChange = (event) => {
-    const { toolBar } = this.state;
-    toolBar.width = isNaN(Number(event.target.value)) ? dragStyle.width : Number(event.target.value);
-    this.setState({
-      toolBar
-    });
+    if (!isNaN(Number(event.target.value))) {
+      this.setState({
+        width: Number(event.target.value)
+      });
+    }
   }
   onInputHeightChange = (event) => {
-    const { toolBar } = this.state;
-    toolBar.height = isNaN(Number(event.target.value)) ? dragStyle.width : Number(event.target.value);
-    this.setState({
-      toolBar
-    });
+    if (!isNaN(Number(event.target.value))) {
+      this.setState({
+        height: Number(event.target.value)
+      });
+    }
+  }
+  onChangeSize = (toolInfo) => {
+    const { width, height } = this.state;
+    toolInfo.changeSize(width, height);
   }
   render() {
-    const { isShow, isUse, isLog, toolBar } = this.state;
+    const { isShow, isUse, isLog, } = this.state;
     const self = this;
     const dragRenderProps = {
       width: 600,
@@ -65,7 +70,6 @@ export default class Example extends Component {
       onDragStart: this.dragStart,
       onDragging: this.dragging,
       toolBar: {
-        ...toolBar,
         isShow,
         isUse,
       },
@@ -73,13 +77,17 @@ export default class Example extends Component {
         if (!toolInfo.isUse || !toolInfo.isShow) {
           return;
         }
+        const { width, height } = self.state;
         return (
           <div style={{position: 'absolute'}}>
-            width: <span><input onChange={self.onInputWidthChange} value={toolInfo.width} /></span>
-            height: <span><input onChange={self.onInputHeightChange} value={toolInfo.height} /></span>
-            <button onClick={toolInfo.sizeChange}>修改尺寸</button>
+            width: <span><input onChange={self.onInputWidthChange} value={width} /></span>
+            height: <span><input onChange={self.onInputHeightChange} value={height} /></span>
+            <button onClick={() => self.onChangeSize(toolInfo)}>修改尺寸</button>
           </div>
         );
+      },
+      reload(info, status) {
+        console.log('info---->', info, status);
       }
     }
     const dragProps = {
