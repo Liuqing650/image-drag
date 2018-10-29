@@ -3451,7 +3451,8 @@ var ImageDrag = function (_React$Component) {
           width = _props.width,
           onDragStart = _props.onDragStart,
           onDragEnd = _props.onDragEnd,
-          image = _props.image;
+          image = _props.image,
+          tabIndex = _props.tabIndex;
 
       var margin = [5, 5];
       var dragProps = {
@@ -3470,6 +3471,7 @@ var ImageDrag = function (_React$Component) {
       var evenProps = {
         onClick: this.onFocusImage,
         onBlur: this.onBlurImage,
+        tabIndex: tabIndex,
         style: {
           outline: 'none',
           position: 'relative',
@@ -3478,7 +3480,7 @@ var ImageDrag = function (_React$Component) {
       };
       return _react2.default.createElement(
         'div',
-        (0, _extends3.default)({ tabIndex: '0' }, evenProps),
+        evenProps,
         this.renderImage(),
         _react2.default.createElement(_Drag2.default, dragProps),
         this.renderToolBar()
@@ -3489,6 +3491,7 @@ var ImageDrag = function (_React$Component) {
 }(_react2.default.Component);
 
 ImageDrag.defaultProps = {
+  tabIndex: 0,
   imgStyle: {
     width: 600,
     height: 400
