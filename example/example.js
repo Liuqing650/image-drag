@@ -8,21 +8,26 @@ export default class Example extends Component {
     style: {},
     isShow: false,
     isUse: true,
+    isLog: false,
     toolBar: {}
   }
-  dragStart = (style) => {
-    this.setState({
-      style,
-      dragEnd: false,
-      dragStart: true,
-    });
+  dragStart = (toolInfo) => {
+    if (!this.state.isLog) {
+      return;
+    }
+    console.log('dragStart---->', toolInfo);
   }
-  onDragEnd = (style) => {
-    this.setState({
-      style,
-      dragEnd: true,
-      dragStart: false,
-    });
+  dragEnd = (toolInfo) => {
+    if (!this.state.isLog) {
+      return;
+    }
+    console.log('dragEnd---->', toolInfo);
+  }
+  dragging = (style) => {
+    if (!this.state.isLog) {
+      return;
+    }
+    console.log('dragging---->', style);
   }
   onChangePoint = () => {
     const { isShow } = this.state;
@@ -31,6 +36,10 @@ export default class Example extends Component {
   onChangeToolbar = () => {
     const { isUse } = this.state;
     this.setState({isUse: !isUse});
+  }
+  onChangeLog = () => {
+    const { isLog } = this.state;
+    this.setState({isLog: !isLog});
   }
   onInputWidthChange = (event) => {
     const { toolBar } = this.state;
@@ -47,12 +56,14 @@ export default class Example extends Component {
     });
   }
   render() {
-    const { isShow, isUse, toolBar } = this.state;
+    const { isShow, isUse, isLog, toolBar } = this.state;
     const self = this;
     const dragRenderProps = {
       width: 600,
       image: imgSrc,
-      onDragEnd: this.onDragEnd,
+      onDragEnd: this.dragEnd,
+      onDragStart: this.dragStart,
+      onDragging: this.dragging,
       toolBar: {
         ...toolBar,
         isShow,
@@ -90,6 +101,7 @@ export default class Example extends Component {
         <div style={wrapStyle}>
           <button onClick={this.onChangePoint}>{isShow ? 'HIDE' : 'SHOW'}</button>
           <button onClick={this.onChangeToolbar}>{isUse ? 'HIDE-TOOLBAR' : 'SHOW-TOOLBAR'}</button>
+          <button onClick={this.onChangeLog}>{isLog ? 'HIDE-LOG' : 'SHOW-LOG'}</button>
           <h1>子元素</h1>
           <ImageDrag {...dragRenderProps}>
             <img style={{

@@ -18,6 +18,8 @@
 |toolBar|object|工具栏配置|*|
 |dragPoint|object|拖拽点配置|*|
 |onClickImage|function|点击图片|function(toolInfo)|
+|onDragStart|function|拖拽开始|function(toolInfo, event, [clientX, clientY])|
+|onDragEnd|function|拖拽结束|function(toolInfo, event, [clientX, clientY])|
 |renderTool|function|自定义工具栏显示形式|function(toolInfo),接收一个Dom元素|
 
 > renderTool中传入的参数为 `toolBar` 中的信息， 同时会多传递一个刷新图片尺寸的函数

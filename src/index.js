@@ -119,6 +119,9 @@ class ImageDrag extends React.Component {
   }
   handleStyleChange = (style) => {
     this.setState({dragStyle: style});
+    if (this.props.onDragging) {
+      this.props.onDragging(style);
+    }
   }
   onSizeChange = (event) => {
     const { dragStyle, imgStyle } = this.state;
@@ -232,13 +235,27 @@ class ImageDrag extends React.Component {
     }
   }
   onDragStart = (even, style) => {
-    const { toolBar } = this.state;
     if (this.props.onDragStart) {
-      this.props.onDragStart(even, style, toolBar);
+      const { toolBar, dragStyle, imgStyle } = this.state;
+      const toolInfo = {
+        ...toolBar,
+        width: dragStyle.width || imgStyle.width,
+        height: dragStyle.height || imgStyle.height
+      };
+      this.props.onDragStart(toolInfo, even, style);
     }
   }
   onDragEnd = (even, style) => {
     this.onModifyImageStyle();
+    if (this.props.onDragEnd) {
+      const { toolBar, dragStyle, imgStyle } = this.state;
+      const toolInfo = {
+        ...toolBar,
+        width: dragStyle.width || imgStyle.width,
+        height: dragStyle.height || imgStyle.height
+      };
+      this.props.onDragEnd(toolInfo, even, style);
+    }
   }
   render() {
     const { dragStyle, imgStyle, toolBar, imgStatus, dragPoint } = this.state;
