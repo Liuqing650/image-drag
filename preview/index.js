@@ -2,13 +2,13 @@
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
 	else if(typeof define === 'function' && define.amd)
-		define("imageDragger", [], factory);
+		define("imageDrag", [], factory);
 	else if(typeof exports === 'object')
-		exports["imageDragger"] = factory();
+		exports["imageDrag"] = factory();
 	else
-		root["imageDragger"] = factory();
+		root["imageDrag"] = factory();
 })(typeof self !== 'undefined' ? self : this, function() {
-return webpackJsonpimageDragger([0],{
+return webpackJsonpimageDrag([0],{
 
 /***/ "./example/example.js":
 /***/ (function(module, exports, __webpack_require__) {
@@ -78,27 +78,35 @@ var Example = function (_Component) {
         style: {},
         isShow: false,
         isUse: true,
+        isLog: false,
         toolBar: {}
       }
     }), Object.defineProperty(_this, 'dragStart', {
       enumerable: true,
       writable: true,
-      value: function value(style) {
-        _this.setState({
-          style: style,
-          dragEnd: false,
-          dragStart: true
-        });
+      value: function value(toolInfo) {
+        if (!_this.state.isLog) {
+          return;
+        }
+        console.log('dragStart---->', toolInfo);
       }
-    }), Object.defineProperty(_this, 'onDragEnd', {
+    }), Object.defineProperty(_this, 'dragEnd', {
+      enumerable: true,
+      writable: true,
+      value: function value(toolInfo) {
+        if (!_this.state.isLog) {
+          return;
+        }
+        console.log('dragEnd---->', toolInfo);
+      }
+    }), Object.defineProperty(_this, 'dragging', {
       enumerable: true,
       writable: true,
       value: function value(style) {
-        _this.setState({
-          style: style,
-          dragEnd: true,
-          dragStart: false
-        });
+        if (!_this.state.isLog) {
+          return;
+        }
+        console.log('dragging---->', style);
       }
     }), Object.defineProperty(_this, 'onChangePoint', {
       enumerable: true,
@@ -115,6 +123,14 @@ var Example = function (_Component) {
         var isUse = _this.state.isUse;
 
         _this.setState({ isUse: !isUse });
+      }
+    }), Object.defineProperty(_this, 'onChangeLog', {
+      enumerable: true,
+      writable: true,
+      value: function value() {
+        var isLog = _this.state.isLog;
+
+        _this.setState({ isLog: !isLog });
       }
     }), Object.defineProperty(_this, 'onInputWidthChange', {
       enumerable: true,
@@ -147,13 +163,16 @@ var Example = function (_Component) {
       var _state = this.state,
           isShow = _state.isShow,
           isUse = _state.isUse,
+          isLog = _state.isLog,
           toolBar = _state.toolBar;
 
       var self = this;
       var dragRenderProps = {
         width: 600,
         image: imgSrc,
-        onDragEnd: this.onDragEnd,
+        onDragEnd: this.dragEnd,
+        onDragStart: this.dragStart,
+        onDragging: this.dragging,
         toolBar: (0, _extends3.default)({}, toolBar, {
           isShow: isShow,
           isUse: isUse
@@ -214,6 +233,11 @@ var Example = function (_Component) {
             'button',
             { onClick: this.onChangeToolbar },
             isUse ? 'HIDE-TOOLBAR' : 'SHOW-TOOLBAR'
+          ),
+          _react2.default.createElement(
+            'button',
+            { onClick: this.onChangeLog },
+            isLog ? 'HIDE-LOG' : 'SHOW-LOG'
           ),
           _react2.default.createElement(
             'h1',
@@ -3185,6 +3209,9 @@ var ImageDrag = function (_React$Component) {
       writable: true,
       value: function value(style) {
         _this.setState({ dragStyle: style });
+        if (_this.props.onDragging) {
+          _this.props.onDragging(style);
+        }
       }
     }), Object.defineProperty(_this, 'onSizeChange', {
       enumerable: true,
@@ -3364,10 +3391,17 @@ var ImageDrag = function (_React$Component) {
       enumerable: true,
       writable: true,
       value: function value(even, style) {
-        var toolBar = _this.state.toolBar;
-
         if (_this.props.onDragStart) {
-          _this.props.onDragStart(even, style, toolBar);
+          var _this$state5 = _this.state,
+              toolBar = _this$state5.toolBar,
+              _dragStyle2 = _this$state5.dragStyle,
+              _imgStyle = _this$state5.imgStyle;
+
+          var toolInfo = (0, _extends3.default)({}, toolBar, {
+            width: _dragStyle2.width || _imgStyle.width,
+            height: _dragStyle2.height || _imgStyle.height
+          });
+          _this.props.onDragStart(toolInfo, even, style);
         }
       }
     }), Object.defineProperty(_this, 'onDragEnd', {
@@ -3375,6 +3409,18 @@ var ImageDrag = function (_React$Component) {
       writable: true,
       value: function value(even, style) {
         _this.onModifyImageStyle();
+        if (_this.props.onDragEnd) {
+          var _this$state6 = _this.state,
+              toolBar = _this$state6.toolBar,
+              _dragStyle3 = _this$state6.dragStyle,
+              _imgStyle2 = _this$state6.imgStyle;
+
+          var toolInfo = (0, _extends3.default)({}, toolBar, {
+            width: _dragStyle3.width || _imgStyle2.width,
+            height: _dragStyle3.height || _imgStyle2.height
+          });
+          _this.props.onDragEnd(toolInfo, even, style);
+        }
       }
     }), _temp), (0, _possibleConstructorReturn3.default)(_this, _ret);
   }

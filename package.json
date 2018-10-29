@@ -20,7 +20,7 @@
     "init": "maby-lib init",
     "analyzer": "maby-lib analyzer",
     "preview": "maby-lib preview",
-    "prepublish": "npm run build"
+    "prepublish": "npm run preview && npm run build"
   },
   "repository": {
     "type": "git",
