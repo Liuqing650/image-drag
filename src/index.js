@@ -259,7 +259,7 @@ class ImageDrag extends React.Component {
   }
   render() {
     const { dragStyle, imgStyle, toolBar, imgStatus, dragPoint } = this.state;
-    const { children, width, onDragStart, onDragEnd, image } = this.props;
+    const { children, width, onDragStart, onDragEnd, image, tabIndex } = this.props;
     const margin = [5, 5];
     const dragProps = {
       padding: 0,
@@ -277,6 +277,7 @@ class ImageDrag extends React.Component {
     const evenProps = {
       onClick: this.onFocusImage,
       onBlur: this.onBlurImage,
+      tabIndex,
       style: {
         outline: 'none',
         position: 'relative',
@@ -284,7 +285,7 @@ class ImageDrag extends React.Component {
       }
     }
     return (
-      <div tabIndex="0" {...evenProps}>
+      <div {...evenProps}>
         {this.renderImage()}
         <Drag {...dragProps} />
         {this.renderToolBar()}
@@ -294,6 +295,7 @@ class ImageDrag extends React.Component {
 }
 
 ImageDrag.defaultProps={
+  tabIndex: 0,
   imgStyle: {
     width: 600,
     height: 400

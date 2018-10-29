@@ -44,6 +44,7 @@ export default Image;
 |imgStyle|object|图片样式属性|*|v 1.0.0|
 |toolBar|object|工具栏配置|*|v 1.0.0|
 |dragPoint|object|拖拽点配置|*|v 1.0.0|
+|tabIndex|string|设置 tabIndex 属性|*|**v 1.2.0**|
 |onClickImage|function|点击图片|function(toolInfo)|v 1.0.0|
 |onDragStart|function|拖拽开始|function(toolInfo, event, [clientX, clientY])|**v 1.1.0**|
 |onDragging|function|拖拽中|function(imageDragStyle)|**v 1.1.0**|
