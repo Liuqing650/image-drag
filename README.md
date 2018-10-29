@@ -6,6 +6,33 @@
 
 [![NPM](https://nodei.co/npm-dl/image-drag.png?months=3)](https://nodei.co/npm/image-drag/)
 
+## Example
+
+```jsx
+import React from 'react';
+import ImageDrag from 'image-drag';
+
+class Image extends React.Component {
+  state = {
+    isShow: false,
+    isUse: true,
+  }
+  render() {
+    const { isShow, isUse } = this.state;
+    const dragProps = {
+      width: 600, // can only receive number
+      image: 'https://image.xx.jpg' || 'file',
+      toolBar: {
+        isShow,
+        isUse
+      }
+    }
+    return (<ImageDrag {...dragProps} />);
+  }
+}
+export default Image;
+```
+
 ## API
 
 |name|type|desc|other|version|
