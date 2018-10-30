@@ -141,44 +141,6 @@ class ImageDrag extends React.Component {
     });
     this.onModifyImageStyle(width, height);
   }
-  renderImage = () => {
-    const { children, width, image } = this.props;
-    const { imgStatus, imgStyle, imageInfo, blockStyle, markStyle } = this.state;
-    const { attr, title } = imageInfo;
-    switch (imgStatus) {
-      case opt.BlockChildren:
-        return (<div style={blockStyle}>{children}</div>);
-      case opt.MarkChildren:
-        return (<span style={markStyle}>{children}</span>);
-      case opt.BlockImage:
-        return (<span style={blockStyle}><img style={blockStyle} src={image} attr={attr} title={title}  /></span>);
-      case opt.MarkImage:
-        return (<span style={markStyle}><img style={markStyle} src={image} attr={attr} title={title} /></span>);
-      default:
-        break;
-    }
-  }
-  renderToolBar = () => {
-    const { toolBar, dragStyle, imgStyle, renderTool } = this.state;
-    const isShowToolBar = toolBar.isUse && (toolBar.isShow || toolBar.isFocus);
-    const toolBarStyle = { position: 'absolute', };
-    if (renderTool && typeof renderTool === 'function') {
-      const toolInfo = {
-        ...toolBar,
-        width: dragStyle.width || imgStyle.width,
-        height: dragStyle.height || imgStyle.height,
-      };
-      return renderTool(toolInfo);
-    }
-    if (isShowToolBar) {
-      return (
-        <div className={toolBar.className || ''} style={toolBarStyle}>
-          width: <span>{dragStyle.width || imgStyle.width}</span>
-          height: <span>{dragStyle.height || imgStyle.height}</span>
-        </div>
-      );
-    }
-  }
   onFocusImage = (even) => {
     const { toolBar, dragStyle, imgStyle } = this.state;
     even.preventDefault();
@@ -262,20 +224,63 @@ class ImageDrag extends React.Component {
       this.props.onDragEnd(toolInfo, even, style);
     }
   }
-  render() {
-    const { imgStyle, toolBar, imgStatus, dragPoint } = this.state;
-    const { children, width, onDragStart, onDragEnd, image, tabIndex } = this.props;
+  renderImage = () => {
+    const { children, width, image } = this.props;
+    const { imgStatus, imgStyle, imageInfo, blockStyle, markStyle } = this.state;
+    const { attr, title } = imageInfo;
+    switch (imgStatus) {
+      case opt.BlockChildren:
+        return (<div style={blockStyle}>{children}</div>);
+      case opt.MarkChildren:
+        return (<span style={markStyle}>{children}</span>);
+      case opt.BlockImage:
+        return (<span style={blockStyle}><img style={blockStyle} src={image} attr={attr} title={title} /></span>);
+      case opt.MarkImage:
+        return (<span style={markStyle}><img style={markStyle} src={image} attr={attr} title={title} /></span>);
+      default:
+        break;
+    }
+  }
+  renderDrag = () => {
+    const { imgStyle, imgStatus, dragPoint, toolBar } = this.state;
+    const { image } = this.props;
+    const isShowDrag = toolBar.isUse && (toolBar.isShow || toolBar.isFocus);
     const dragProps = {
       padding: 0,
       imgStatus: imgStatus,
       bgImg: image,
-      toolBar: toolBar,
       imgStyle: imgStyle,
       dragPoint: dragPoint,
       onStyleChange: this.handleStyleChange,
       onDragStart: this.onDragStart,
       onDragEnd: this.onDragEnd
     }
+    return isShowDrag ? <Drag {...dragProps} /> : null;
+  };
+  renderToolBar = () => {
+    const { toolBar, dragStyle, imgStyle, renderTool } = this.state;
+    const isShowToolBar = toolBar.isUse && (toolBar.isShow || toolBar.isFocus);
+    const toolBarStyle = { position: 'absolute', };
+    if (renderTool && typeof renderTool === 'function') {
+      const toolInfo = {
+        ...toolBar,
+        width: dragStyle.width || imgStyle.width,
+        height: dragStyle.height || imgStyle.height,
+      };
+      return renderTool(toolInfo);
+    }
+    if (isShowToolBar) {
+      return (
+        <div className={toolBar.className || ''} style={toolBarStyle}>
+          width: <span>{dragStyle.width || imgStyle.width}</span>
+          height: <span>{dragStyle.height || imgStyle.height}</span>
+        </div>
+      );
+    }
+  }
+  render() {
+    const { imgStyle, toolBar, imgStatus, dragPoint } = this.state;
+    const { children, width, onDragStart, onDragEnd, image, tabIndex } = this.props;
     const evenProps = {
       onClick: this.onFocusImage,
       onBlur: this.onBlurImage,
@@ -289,7 +294,7 @@ class ImageDrag extends React.Component {
     return (
       <div {...evenProps}>
         {this.renderImage()}
-        <Drag {...dragProps} />
+        {this.renderDrag()}
         {this.renderToolBar()}
       </div>
     );

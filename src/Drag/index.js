@@ -203,7 +203,6 @@ class Drag extends React.Component {
     };
     renderDragPoint = (direction) => {
       const { pointStyle } = this.state;
-      const { toolBar } = this.props;
       const directionPoint = {
         topLeft : this.props.dragPoint.topLeftPoint,
         topRight : this.props.dragPoint.topRightPoint,
@@ -212,10 +211,6 @@ class Drag extends React.Component {
       };
       const pointMove = -4;
       const attPoint = directionPoint[direction];
-      const isShow = toolBar.isShow || toolBar.isFocus;
-      if (!attPoint || !isShow) {
-        return;
-      }
       let _pointStyle = Object.assign({}, pointStyle);
       const pointSize = {
         ..._pointStyle,
