@@ -181,7 +181,7 @@ class ImageDrag extends React.Component {
   }
   onModifyImageStyle = (width, height) => {
     // imgStyle 保留初始值
-    const { imgStatus, imgStyle } = this.state;
+    const { imgStatus, imgStyle, blockStyle, markStyle } = this.state;
     const style = {
       width: width || imgStyle.width,
       height: height || imgStyle.height,
@@ -189,11 +189,11 @@ class ImageDrag extends React.Component {
     switch (imgStatus) {
       case opt.BlockChildren:
       case opt.BlockImage:
-        this.setState({ blockStyle: style });
+        this.setState({ blockStyle: { ...blockStyle, ...style }});
         break;
       case opt.MarkChildren:
       case opt.MarkImage:
-        this.setState({ markStyle: style });
+        this.setState({ markStyle: { ...markStyle, ...style } });
         break;
       default:
         break;
@@ -244,7 +244,8 @@ class ImageDrag extends React.Component {
   renderDrag = () => {
     const { imgStyle, imgStatus, dragPoint, toolBar } = this.state;
     const { image } = this.props;
-    const isShowDrag = toolBar.isUse && (toolBar.isShow || toolBar.isFocus);
+    const isHideDrag = !toolBar.isUse || !toolBar.isUse || !toolBar.isShow;
+    console.log('isHideDrag--%s--isShow--%s--isFocus--%s', isHideDrag, toolBar.isShow, toolBar.isFocus);
     const dragProps = {
       padding: 0,
       imgStatus: imgStatus,
@@ -255,7 +256,7 @@ class ImageDrag extends React.Component {
       onDragStart: this.onDragStart,
       onDragEnd: this.onDragEnd
     }
-    return isShowDrag ? <Drag {...dragProps} /> : null;
+    return !isHideDrag ? <Drag {...dragProps} /> : null;
   };
   renderToolBar = () => {
     const { toolBar, dragStyle, imgStyle, renderTool } = this.state;
@@ -280,7 +281,7 @@ class ImageDrag extends React.Component {
   }
   render() {
     const { imgStyle, toolBar, imgStatus, dragPoint } = this.state;
-    const { children, width, onDragStart, onDragEnd, image, tabIndex } = this.props;
+    const { children, width, onDragStart, onDragEnd, image, tabIndex, wrapStyle } = this.props;
     const evenProps = {
       onClick: this.onFocusImage,
       onBlur: this.onBlurImage,
@@ -288,7 +289,8 @@ class ImageDrag extends React.Component {
       style: {
         outline: 'none',
         position: 'relative',
-        display: 'inline-block'
+        display: 'inline-block',
+        ...wrapStyle,
       }
     }
     return (
@@ -304,6 +306,7 @@ class ImageDrag extends React.Component {
 // API
 ImageDrag.defaultProps={
   tabIndex: 0,
+  wrapStyle: {},
   imgStyle: {
     width: 600,
     height: 400
