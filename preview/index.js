@@ -3039,7 +3039,6 @@ var Drag = (_temp = _class = function (_React$Component) {
     writable: true,
     value: function value(direction) {
       var pointStyle = _this2.state.pointStyle;
-      var toolBar = _this2.props.toolBar;
 
       var directionPoint = {
         topLeft: _this2.props.dragPoint.topLeftPoint,
@@ -3049,10 +3048,6 @@ var Drag = (_temp = _class = function (_React$Component) {
       };
       var pointMove = -4;
       var attPoint = directionPoint[direction];
-      var isShow = toolBar.isShow || toolBar.isFocus;
-      if (!attPoint || !isShow) {
-        return;
-      }
       var _pointStyle = (0, _assign2.default)({}, pointStyle);
       var pointSize = (0, _extends3.default)({}, _pointStyle, {
         width: attPoint.width || 10,
@@ -3335,98 +3330,14 @@ var ImageDrag = function (_React$Component) {
         });
         _this.onModifyImageStyle(width, height);
       }
-    }), Object.defineProperty(_this, 'renderImage', {
-      enumerable: true,
-      writable: true,
-      value: function value() {
-        var _this$props3 = _this.props,
-            children = _this$props3.children,
-            width = _this$props3.width,
-            image = _this$props3.image;
-        var _this$state2 = _this.state,
-            imgStatus = _this$state2.imgStatus,
-            imgStyle = _this$state2.imgStyle,
-            imageInfo = _this$state2.imageInfo,
-            blockStyle = _this$state2.blockStyle,
-            markStyle = _this$state2.markStyle;
-        var attr = imageInfo.attr,
-            title = imageInfo.title;
-
-        switch (imgStatus) {
-          case _static2.default.BlockChildren:
-            return _react2.default.createElement(
-              'div',
-              { style: blockStyle },
-              children
-            );
-          case _static2.default.MarkChildren:
-            return _react2.default.createElement(
-              'span',
-              { style: markStyle },
-              children
-            );
-          case _static2.default.BlockImage:
-            return _react2.default.createElement(
-              'span',
-              { style: blockStyle },
-              _react2.default.createElement('img', { style: blockStyle, src: image, attr: attr, title: title })
-            );
-          case _static2.default.MarkImage:
-            return _react2.default.createElement(
-              'span',
-              { style: markStyle },
-              _react2.default.createElement('img', { style: markStyle, src: image, attr: attr, title: title })
-            );
-          default:
-            break;
-        }
-      }
-    }), Object.defineProperty(_this, 'renderToolBar', {
-      enumerable: true,
-      writable: true,
-      value: function value() {
-        var _this$state3 = _this.state,
-            toolBar = _this$state3.toolBar,
-            dragStyle = _this$state3.dragStyle,
-            imgStyle = _this$state3.imgStyle,
-            renderTool = _this$state3.renderTool;
-
-        var isShowToolBar = toolBar.isUse && (toolBar.isShow || toolBar.isFocus);
-        var toolBarStyle = { position: 'absolute' };
-        if (renderTool && typeof renderTool === 'function') {
-          var toolInfo = (0, _extends3.default)({}, toolBar, {
-            width: dragStyle.width || imgStyle.width,
-            height: dragStyle.height || imgStyle.height
-          });
-          return renderTool(toolInfo);
-        }
-        if (isShowToolBar) {
-          return _react2.default.createElement(
-            'div',
-            { className: toolBar.className || '', style: toolBarStyle },
-            'width: ',
-            _react2.default.createElement(
-              'span',
-              null,
-              dragStyle.width || imgStyle.width
-            ),
-            'height: ',
-            _react2.default.createElement(
-              'span',
-              null,
-              dragStyle.height || imgStyle.height
-            )
-          );
-        }
-      }
     }), Object.defineProperty(_this, 'onFocusImage', {
       enumerable: true,
       writable: true,
       value: function value(even) {
-        var _this$state4 = _this.state,
-            toolBar = _this$state4.toolBar,
-            dragStyle = _this$state4.dragStyle,
-            imgStyle = _this$state4.imgStyle;
+        var _this$state2 = _this.state,
+            toolBar = _this$state2.toolBar,
+            dragStyle = _this$state2.dragStyle,
+            imgStyle = _this$state2.imgStyle;
 
         even.preventDefault();
         if (!toolBar.isFocus) {
@@ -3470,9 +3381,9 @@ var ImageDrag = function (_React$Component) {
       writable: true,
       value: function value(width, height) {
         // imgStyle 保留初始值
-        var _this$state5 = _this.state,
-            imgStatus = _this$state5.imgStatus,
-            imgStyle = _this$state5.imgStyle;
+        var _this$state3 = _this.state,
+            imgStatus = _this$state3.imgStatus,
+            imgStyle = _this$state3.imgStyle;
 
         var style = {
           width: width || imgStyle.width,
@@ -3496,10 +3407,10 @@ var ImageDrag = function (_React$Component) {
       writable: true,
       value: function value(even, style) {
         if (_this.props.onDragStart) {
-          var _this$state6 = _this.state,
-              toolBar = _this$state6.toolBar,
-              dragStyle = _this$state6.dragStyle,
-              imgStyle = _this$state6.imgStyle;
+          var _this$state4 = _this.state,
+              toolBar = _this$state4.toolBar,
+              dragStyle = _this$state4.dragStyle,
+              imgStyle = _this$state4.imgStyle;
 
           var toolInfo = (0, _extends3.default)({}, toolBar, {
             width: dragStyle.width || imgStyle.width,
@@ -3512,10 +3423,10 @@ var ImageDrag = function (_React$Component) {
       enumerable: true,
       writable: true,
       value: function value(even, style) {
-        var _this$state7 = _this.state,
-            toolBar = _this$state7.toolBar,
-            dragStyle = _this$state7.dragStyle,
-            imgStyle = _this$state7.imgStyle;
+        var _this$state5 = _this.state,
+            toolBar = _this$state5.toolBar,
+            dragStyle = _this$state5.dragStyle,
+            imgStyle = _this$state5.imgStyle;
 
         var width = dragStyle.width || imgStyle.width;
         var height = dragStyle.height || imgStyle.height;
@@ -3526,6 +3437,114 @@ var ImageDrag = function (_React$Component) {
         _this.onModifyImageStyle(width, height);
         if (_this.props.onDragEnd) {
           _this.props.onDragEnd(toolInfo, even, style);
+        }
+      }
+    }), Object.defineProperty(_this, 'renderImage', {
+      enumerable: true,
+      writable: true,
+      value: function value() {
+        var _this$props3 = _this.props,
+            children = _this$props3.children,
+            width = _this$props3.width,
+            image = _this$props3.image;
+        var _this$state6 = _this.state,
+            imgStatus = _this$state6.imgStatus,
+            imgStyle = _this$state6.imgStyle,
+            imageInfo = _this$state6.imageInfo,
+            blockStyle = _this$state6.blockStyle,
+            markStyle = _this$state6.markStyle;
+        var attr = imageInfo.attr,
+            title = imageInfo.title;
+
+        switch (imgStatus) {
+          case _static2.default.BlockChildren:
+            return _react2.default.createElement(
+              'div',
+              { style: blockStyle },
+              children
+            );
+          case _static2.default.MarkChildren:
+            return _react2.default.createElement(
+              'span',
+              { style: markStyle },
+              children
+            );
+          case _static2.default.BlockImage:
+            return _react2.default.createElement(
+              'span',
+              { style: blockStyle },
+              _react2.default.createElement('img', { style: blockStyle, src: image, attr: attr, title: title })
+            );
+          case _static2.default.MarkImage:
+            return _react2.default.createElement(
+              'span',
+              { style: markStyle },
+              _react2.default.createElement('img', { style: markStyle, src: image, attr: attr, title: title })
+            );
+          default:
+            break;
+        }
+      }
+    }), Object.defineProperty(_this, 'renderDrag', {
+      enumerable: true,
+      writable: true,
+      value: function value() {
+        var _this$state7 = _this.state,
+            imgStyle = _this$state7.imgStyle,
+            imgStatus = _this$state7.imgStatus,
+            dragPoint = _this$state7.dragPoint,
+            toolBar = _this$state7.toolBar;
+        var image = _this.props.image;
+
+        var isShowDrag = toolBar.isUse && (toolBar.isShow || toolBar.isFocus);
+        var dragProps = {
+          padding: 0,
+          imgStatus: imgStatus,
+          bgImg: image,
+          imgStyle: imgStyle,
+          dragPoint: dragPoint,
+          onStyleChange: _this.handleStyleChange,
+          onDragStart: _this.onDragStart,
+          onDragEnd: _this.onDragEnd
+        };
+        return isShowDrag ? _react2.default.createElement(_Drag2.default, dragProps) : null;
+      }
+    }), Object.defineProperty(_this, 'renderToolBar', {
+      enumerable: true,
+      writable: true,
+      value: function value() {
+        var _this$state8 = _this.state,
+            toolBar = _this$state8.toolBar,
+            dragStyle = _this$state8.dragStyle,
+            imgStyle = _this$state8.imgStyle,
+            renderTool = _this$state8.renderTool;
+
+        var isShowToolBar = toolBar.isUse && (toolBar.isShow || toolBar.isFocus);
+        var toolBarStyle = { position: 'absolute' };
+        if (renderTool && typeof renderTool === 'function') {
+          var toolInfo = (0, _extends3.default)({}, toolBar, {
+            width: dragStyle.width || imgStyle.width,
+            height: dragStyle.height || imgStyle.height
+          });
+          return renderTool(toolInfo);
+        }
+        if (isShowToolBar) {
+          return _react2.default.createElement(
+            'div',
+            { className: toolBar.className || '', style: toolBarStyle },
+            'width: ',
+            _react2.default.createElement(
+              'span',
+              null,
+              dragStyle.width || imgStyle.width
+            ),
+            'height: ',
+            _react2.default.createElement(
+              'span',
+              null,
+              dragStyle.height || imgStyle.height
+            )
+          );
         }
       }
     }), _temp), (0, _possibleConstructorReturn3.default)(_this, _ret);
@@ -3559,17 +3578,6 @@ var ImageDrag = function (_React$Component) {
           image = _props.image,
           tabIndex = _props.tabIndex;
 
-      var dragProps = {
-        padding: 0,
-        imgStatus: imgStatus,
-        bgImg: image,
-        toolBar: toolBar,
-        imgStyle: imgStyle,
-        dragPoint: dragPoint,
-        onStyleChange: this.handleStyleChange,
-        onDragStart: this.onDragStart,
-        onDragEnd: this.onDragEnd
-      };
       var evenProps = {
         onClick: this.onFocusImage,
         onBlur: this.onBlurImage,
@@ -3584,7 +3592,7 @@ var ImageDrag = function (_React$Component) {
         'div',
         evenProps,
         this.renderImage(),
-        _react2.default.createElement(_Drag2.default, dragProps),
+        this.renderDrag(),
         this.renderToolBar()
       );
     }
