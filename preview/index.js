@@ -57,35 +57,34 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var imgSrc = 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1540805600&di=36ca8557dbe2dd2a6d5a285b7a63559c&imgtype=jpg&er=1&src=http%3A%2F%2Fimgsrc.baidu.com%2Fimgad%2Fpic%2Fitem%2F4610b912c8fcc3ce79f8f9099945d688d43f20cb.jpg';
 
-var Example = function (_Component) {
-  (0, _inherits3.default)(Example, _Component);
+var CustomizeExample = function (_Component) {
+  (0, _inherits3.default)(CustomizeExample, _Component);
 
-  function Example() {
+  function CustomizeExample() {
     var _ref;
 
     var _temp, _this, _ret;
 
-    (0, _classCallCheck3.default)(this, Example);
+    (0, _classCallCheck3.default)(this, CustomizeExample);
 
     for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
       args[_key] = arguments[_key];
     }
 
-    return _ret = (_temp = (_this = (0, _possibleConstructorReturn3.default)(this, (_ref = Example.__proto__ || (0, _getPrototypeOf2.default)(Example)).call.apply(_ref, [this].concat(args))), _this), Object.defineProperty(_this, 'state', {
+    return _ret = (_temp = (_this = (0, _possibleConstructorReturn3.default)(this, (_ref = CustomizeExample.__proto__ || (0, _getPrototypeOf2.default)(CustomizeExample)).call.apply(_ref, [this].concat(args))), _this), Object.defineProperty(_this, 'state', {
       enumerable: true,
       writable: true,
       value: {
-        style: {},
-        isShow: false,
-        isUse: true,
-        isLog: false,
-        toolBar: {}
+        width: 0,
+        height: 0,
+        isImageFocus: false,
+        isFocus: false
       }
     }), Object.defineProperty(_this, 'dragStart', {
       enumerable: true,
       writable: true,
       value: function value(toolInfo) {
-        if (!_this.state.isLog) {
+        if (!_this.props.isLog) {
           return;
         }
         console.log('dragStart---->', toolInfo);
@@ -94,7 +93,9 @@ var Example = function (_Component) {
       enumerable: true,
       writable: true,
       value: function value(toolInfo) {
-        if (!_this.state.isLog) {
+        // 更新拖拽后的数据到自定义拖拽栏下
+        _this.onUpdateStyle(toolInfo);
+        if (!_this.props.isLog) {
           return;
         }
         console.log('dragEnd---->', toolInfo);
@@ -103,68 +104,98 @@ var Example = function (_Component) {
       enumerable: true,
       writable: true,
       value: function value(style) {
-        if (!_this.state.isLog) {
+        if (!_this.props.isLog) {
           return;
         }
         console.log('dragging---->', style);
       }
-    }), Object.defineProperty(_this, 'onChangePoint', {
+    }), Object.defineProperty(_this, 'handleEvent', {
       enumerable: true,
       writable: true,
-      value: function value() {
-        var isShow = _this.state.isShow;
-
-        _this.setState({ isShow: !isShow });
+      value: function value(event) {
+        event.stopPropagation();
       }
-    }), Object.defineProperty(_this, 'onChangeToolbar', {
+    }), Object.defineProperty(_this, 'handleFocusImage', {
       enumerable: true,
       writable: true,
-      value: function value() {
-        var isUse = _this.state.isUse;
-
-        _this.setState({ isUse: !isUse });
+      value: function value(isImageFocus) {
+        _this.setState({ isImageFocus: isImageFocus });
       }
-    }), Object.defineProperty(_this, 'onChangeLog', {
+    }), Object.defineProperty(_this, 'handleFocus', {
       enumerable: true,
       writable: true,
-      value: function value() {
-        var isLog = _this.state.isLog;
-
-        _this.setState({ isLog: !isLog });
+      value: function value(isFocus) {
+        _this.setState({ isFocus: isFocus });
+      }
+    }), Object.defineProperty(_this, 'handleBlur', {
+      enumerable: true,
+      writable: true,
+      value: function value(event, toolInfo) {
+        _this.setState({ isFocus: false });
+        _this.onChangeSize(toolInfo);
+      }
+    }), Object.defineProperty(_this, 'handleClickImage', {
+      enumerable: true,
+      writable: true,
+      value: function value(toolInfo) {
+        // 每次点击图片时获取焦点数据
+        _this.onUpdateStyle(toolInfo);
+      }
+    }), Object.defineProperty(_this, 'handleKeyPress', {
+      enumerable: true,
+      writable: true,
+      value: function value(event, toolInfo) {
+        _this.handleEvent(event);
+        if (event.key === 'Enter') {
+          _this.onChangeSize(toolInfo);
+        }
       }
     }), Object.defineProperty(_this, 'onInputWidthChange', {
       enumerable: true,
       writable: true,
       value: function value(event) {
-        var toolBar = _this.state.toolBar;
-
-        toolBar.width = isNaN(Number(event.target.value)) ? dragStyle.width : Number(event.target.value);
-        _this.setState({
-          toolBar: toolBar
-        });
+        if (!isNaN(Number(event.target.value))) {
+          _this.setState({
+            width: Number(event.target.value)
+          });
+        }
       }
     }), Object.defineProperty(_this, 'onInputHeightChange', {
       enumerable: true,
       writable: true,
       value: function value(event) {
-        var toolBar = _this.state.toolBar;
+        if (!isNaN(Number(event.target.value))) {
+          _this.setState({
+            height: Number(event.target.value)
+          });
+        }
+      }
+    }), Object.defineProperty(_this, 'onChangeSize', {
+      enumerable: true,
+      writable: true,
+      value: function value(toolInfo) {
+        var _this$state = _this.state,
+            width = _this$state.width,
+            height = _this$state.height;
 
-        toolBar.height = isNaN(Number(event.target.value)) ? dragStyle.width : Number(event.target.value);
+        toolInfo.changeSize(width, height);
+      }
+    }), Object.defineProperty(_this, 'onUpdateStyle', {
+      enumerable: true,
+      writable: true,
+      value: function value(toolInfo) {
         _this.setState({
-          toolBar: toolBar
+          width: Number(toolInfo.width),
+          height: Number(toolInfo.height)
         });
       }
     }), _temp), (0, _possibleConstructorReturn3.default)(_this, _ret);
   }
 
-  (0, _createClass3.default)(Example, [{
+  (0, _createClass3.default)(CustomizeExample, [{
     key: 'render',
     value: function render() {
-      var _state = this.state,
-          isShow = _state.isShow,
-          isUse = _state.isUse,
-          isLog = _state.isLog,
-          toolBar = _state.toolBar;
+      var _this2 = this;
 
       var self = this;
       var dragRenderProps = {
@@ -173,14 +204,49 @@ var Example = function (_Component) {
         onDragEnd: this.dragEnd,
         onDragStart: this.dragStart,
         onDragging: this.dragging,
-        toolBar: (0, _extends3.default)({}, toolBar, {
-          isShow: isShow,
-          isUse: isUse
-        }),
+        onClickImage: this.handleClickImage,
+        onFocusImage: function onFocusImage() {
+          return _this2.handleFocusImage(true);
+        },
+        onBlurImage: function onBlurImage() {
+          return _this2.handleFocusImage(false);
+        },
+        toolBar: {
+          isShow: this.state.isFocus || this.state.isImageFocus,
+          isUse: this.props.isUse
+        },
         renderTool: function renderTool(toolInfo) {
           if (!toolInfo.isUse || !toolInfo.isShow) {
             return;
           }
+          var _self$state = self.state,
+              width = _self$state.width,
+              height = _self$state.height;
+
+          var eventProps = {
+            onBlur: function onBlur(event) {
+              return self.handleBlur(event, toolInfo);
+            },
+            onMouseDown: function onMouseDown() {
+              return self.handleFocus(true);
+            },
+            onClick: self.handleEvent,
+            onKeyPress: function onKeyPress(event) {
+              return self.handleKeyPress(event, toolInfo);
+            }
+          };
+          var widthProps = (0, _extends3.default)({}, eventProps, {
+            onChange: function onChange(event) {
+              return self.onInputWidthChange(event, toolInfo);
+            },
+            value: width
+          });
+          var heightProps = (0, _extends3.default)({}, eventProps, {
+            onChange: function onChange(event) {
+              return self.onInputHeightChange(event, toolInfo);
+            },
+            value: height
+          });
           return _react2.default.createElement(
             'div',
             { style: { position: 'absolute' } },
@@ -188,31 +254,114 @@ var Example = function (_Component) {
             _react2.default.createElement(
               'span',
               null,
-              _react2.default.createElement('input', { onChange: self.onInputWidthChange, value: toolInfo.width })
+              _react2.default.createElement('input', widthProps)
             ),
             'height: ',
             _react2.default.createElement(
               'span',
               null,
-              _react2.default.createElement('input', { onChange: self.onInputHeightChange, value: toolInfo.height })
-            ),
-            _react2.default.createElement(
-              'button',
-              { onClick: toolInfo.sizeChange },
-              '\u4FEE\u6539\u5C3A\u5BF8'
+              _react2.default.createElement('input', heightProps)
             )
           );
         }
       };
+      return _react2.default.createElement(
+        _src2.default,
+        dragRenderProps,
+        _react2.default.createElement('img', { style: {
+            width: '100%',
+            height: '100%'
+          },
+          src: imgSrc
+        })
+      );
+    }
+  }]);
+  return CustomizeExample;
+}(_react.Component);
+
+var SimpleExample = function (_Component2) {
+  (0, _inherits3.default)(SimpleExample, _Component2);
+
+  function SimpleExample() {
+    (0, _classCallCheck3.default)(this, SimpleExample);
+    return (0, _possibleConstructorReturn3.default)(this, (SimpleExample.__proto__ || (0, _getPrototypeOf2.default)(SimpleExample)).apply(this, arguments));
+  }
+
+  (0, _createClass3.default)(SimpleExample, [{
+    key: 'render',
+    value: function render() {
       var dragProps = {
         width: 600,
         image: imgSrc,
-        onDragEnd: this.onDragEnd,
         toolBar: {
-          isShow: isShow,
-          isUse: isUse
+          isShow: this.props.isShow,
+          isUse: this.props.isUse
         }
       };
+      return _react2.default.createElement(_src2.default, dragProps);
+    }
+  }]);
+  return SimpleExample;
+}(_react.Component);
+
+var Example = function (_Component3) {
+  (0, _inherits3.default)(Example, _Component3);
+
+  function Example() {
+    var _ref2;
+
+    var _temp2, _this4, _ret2;
+
+    (0, _classCallCheck3.default)(this, Example);
+
+    for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+      args[_key2] = arguments[_key2];
+    }
+
+    return _ret2 = (_temp2 = (_this4 = (0, _possibleConstructorReturn3.default)(this, (_ref2 = Example.__proto__ || (0, _getPrototypeOf2.default)(Example)).call.apply(_ref2, [this].concat(args))), _this4), Object.defineProperty(_this4, 'state', {
+      enumerable: true,
+      writable: true,
+      value: {
+        isShow: true,
+        isUse: true,
+        isLog: false
+      }
+    }), Object.defineProperty(_this4, 'onChangePoint', {
+      enumerable: true,
+      writable: true,
+      value: function value() {
+        var isShow = _this4.state.isShow;
+
+        _this4.setState({ isShow: !isShow });
+      }
+    }), Object.defineProperty(_this4, 'onChangeToolbar', {
+      enumerable: true,
+      writable: true,
+      value: function value() {
+        var isUse = _this4.state.isUse;
+
+        _this4.setState({ isUse: !isUse });
+      }
+    }), Object.defineProperty(_this4, 'onChangeLog', {
+      enumerable: true,
+      writable: true,
+      value: function value() {
+        var isLog = _this4.state.isLog;
+
+        _this4.setState({ isLog: !isLog });
+      }
+    }), _temp2), (0, _possibleConstructorReturn3.default)(_this4, _ret2);
+  }
+
+  (0, _createClass3.default)(Example, [{
+    key: 'render',
+    value: function render() {
+      var _state = this.state,
+          isShow = _state.isShow,
+          isUse = _state.isUse,
+          isLog = _state.isLog;
+
       var wrapStyle = {
         width: 1200,
         height: 800,
@@ -242,24 +391,15 @@ var Example = function (_Component) {
           _react2.default.createElement(
             'h1',
             null,
-            '\u5B50\u5143\u7D20'
+            '\u81EA\u5B9A\u4E49\u793A\u4F8B-\u542B\u5B50\u5143\u7D20'
           ),
-          _react2.default.createElement(
-            _src2.default,
-            dragRenderProps,
-            _react2.default.createElement('img', { style: {
-                width: '100%',
-                height: '100%'
-              },
-              src: imgSrc
-            })
-          ),
+          _react2.default.createElement(CustomizeExample, { isUse: isUse, isLog: isLog }),
           _react2.default.createElement(
             'h1',
             null,
-            '\u65E0\u5B50\u5143\u7D20'
+            '\u7B80\u5355\u793A\u4F8B-\u4E0D\u542B\u5B50\u5143\u7D20'
           ),
-          _react2.default.createElement(_src2.default, dragProps),
+          _react2.default.createElement(SimpleExample, { isShow: isShow, isUse: isUse }),
           _react2.default.createElement('div', { style: { height: 300 } })
         )
       );
@@ -319,13 +459,6 @@ module.exports = { "default": __webpack_require__("./node_modules/core-js/librar
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = { "default": __webpack_require__("./node_modules/core-js/library/fn/object/get-prototype-of.js"), __esModule: true };
-
-/***/ }),
-
-/***/ "./node_modules/babel-runtime/core-js/object/keys.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = { "default": __webpack_require__("./node_modules/core-js/library/fn/object/keys.js"), __esModule: true };
 
 /***/ }),
 
@@ -560,15 +693,6 @@ module.exports = function defineProperty(it, key, desc) {
 
 __webpack_require__("./node_modules/core-js/library/modules/es6.object.get-prototype-of.js");
 module.exports = __webpack_require__("./node_modules/core-js/library/modules/_core.js").Object.getPrototypeOf;
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/library/fn/object/keys.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-__webpack_require__("./node_modules/core-js/library/modules/es6.object.keys.js");
-module.exports = __webpack_require__("./node_modules/core-js/library/modules/_core.js").Object.keys;
 
 
 /***/ }),
@@ -1775,22 +1899,6 @@ var $getPrototypeOf = __webpack_require__("./node_modules/core-js/library/module
 __webpack_require__("./node_modules/core-js/library/modules/_object-sap.js")('getPrototypeOf', function () {
   return function getPrototypeOf(it) {
     return $getPrototypeOf(toObject(it));
-  };
-});
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js/library/modules/es6.object.keys.js":
-/***/ (function(module, exports, __webpack_require__) {
-
-// 19.1.2.14 Object.keys(O)
-var toObject = __webpack_require__("./node_modules/core-js/library/modules/_to-object.js");
-var $keys = __webpack_require__("./node_modules/core-js/library/modules/_object-keys.js");
-
-__webpack_require__("./node_modules/core-js/library/modules/_object-sap.js")('keys', function () {
-  return function keys(it) {
-    return $keys(toObject(it));
   };
 });
 
@@ -3015,10 +3123,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _keys = __webpack_require__("./node_modules/babel-runtime/core-js/object/keys.js");
-
-var _keys2 = _interopRequireDefault(_keys);
-
 var _extends2 = __webpack_require__("./node_modules/babel-runtime/helpers/extends.js");
 
 var _extends3 = _interopRequireDefault(_extends2);
@@ -3075,9 +3179,9 @@ var ImageDrag = function (_React$Component) {
       enumerable: true,
       writable: true,
       value: {
-        dragStyle: {},
-        imgStyle: {},
-        toolBar: {},
+        dragStyle: {}, // 内存中的计算值，用作缓冲
+        imgStyle: {}, // 决定拖拽锚点的位置以及真实图片的样式
+        toolBar: {}, // 信息携带者
         dragPoint: {},
         blockStyle: {},
         markStyle: {},
@@ -3167,7 +3271,7 @@ var ImageDrag = function (_React$Component) {
           isBlock: true,
           isShow: false,
           render: null, // 支持接收一个函数，并返回一个dom元素  function() {return <Dom />}
-          sizeChange: _this.onSizeChange,
+          changeSize: _this.onChangeSize,
           dragStyle: {}
         }, toolBar);
         if (children) {
@@ -3213,21 +3317,23 @@ var ImageDrag = function (_React$Component) {
           _this.props.onDragging(style);
         }
       }
-    }), Object.defineProperty(_this, 'onSizeChange', {
+    }), Object.defineProperty(_this, 'onChangeSize', {
       enumerable: true,
       writable: true,
-      value: function value(event) {
+      value: function value(width, height) {
         var _this$state = _this.state,
             dragStyle = _this$state.dragStyle,
             imgStyle = _this$state.imgStyle;
 
+        var newSize = {
+          width: width || imgStyle.width,
+          height: height || imgStyle.height
+        };
         _this.setState({
-          imgStyle: (0, _extends3.default)({}, imgStyle, {
-            width: dragStyle.width || imgStyle.width,
-            height: dragStyle.height || imgStyle.height
-          })
+          dragStyle: (0, _extends3.default)({}, dragStyle, newSize),
+          imgStyle: (0, _extends3.default)({}, imgStyle, newSize)
         });
-        _this.onModifyImageStyle();
+        _this.onModifyImageStyle(width, height);
       }
     }), Object.defineProperty(_this, 'renderImage', {
       enumerable: true,
@@ -3286,6 +3392,7 @@ var ImageDrag = function (_React$Component) {
             renderTool = _this$state3.renderTool;
 
         var isShowToolBar = toolBar.isUse && (toolBar.isShow || toolBar.isFocus);
+        var toolBarStyle = { position: 'absolute' };
         if (renderTool && typeof renderTool === 'function') {
           var toolInfo = (0, _extends3.default)({}, toolBar, {
             width: dragStyle.width || imgStyle.width,
@@ -3293,9 +3400,6 @@ var ImageDrag = function (_React$Component) {
           });
           return renderTool(toolInfo);
         }
-        var toolBarStyle = {
-          position: 'absolute'
-        };
         if (isShowToolBar) {
           return _react2.default.createElement(
             'div',
@@ -3319,7 +3423,10 @@ var ImageDrag = function (_React$Component) {
       enumerable: true,
       writable: true,
       value: function value(even) {
-        var toolBar = _this.state.toolBar;
+        var _this$state4 = _this.state,
+            toolBar = _this$state4.toolBar,
+            dragStyle = _this$state4.dragStyle,
+            imgStyle = _this$state4.imgStyle;
 
         even.preventDefault();
         if (!toolBar.isFocus) {
@@ -3328,15 +3435,19 @@ var ImageDrag = function (_React$Component) {
               isFocus: true
             })
           });
-        } else {
-          var onClickImage = _this.props.onClickImage;
-          if (onClickImage && typeof onClickImage === 'function') {
-            var toolInfo = (0, _extends3.default)({}, toolBar, {
-              width: dragStyle.width || imgStyle.width,
-              height: dragStyle.height || imgStyle.height
-            });
-            onClickImage(toolInfo);
+        }
+        var toolInfo = (0, _extends3.default)({}, toolBar, {
+          width: dragStyle.width || imgStyle.width,
+          height: dragStyle.height || imgStyle.height
+        });
+        var isShow = !toolBar.isFocus && !toolBar.isShow;
+        if (isShow) {
+          if (_this.props.onClickImage) {
+            _this.props.onClickImage(toolInfo);
           }
+        }
+        if (_this.props.onFocusImage) {
+          _this.props.onFocusImage(toolInfo);
         }
       }
     }), Object.defineProperty(_this, 'onBlurImage', {
@@ -3350,38 +3461,31 @@ var ImageDrag = function (_React$Component) {
             isFocus: false
           })
         });
+        if (_this.props.onBlurImage) {
+          _this.props.onBlurImage(toolBar);
+        }
       }
     }), Object.defineProperty(_this, 'onModifyImageStyle', {
       enumerable: true,
       writable: true,
-      value: function value() {
-        var _this$state4 = _this.state,
-            imgStatus = _this$state4.imgStatus,
-            dragStyle = _this$state4.dragStyle,
-            imgStyle = _this$state4.imgStyle;
-        // 阻止首次加载时dragStyle无值，导致图片异常
+      value: function value(width, height) {
+        // imgStyle 保留初始值
+        var _this$state5 = _this.state,
+            imgStatus = _this$state5.imgStatus,
+            imgStyle = _this$state5.imgStyle;
 
-        if ((0, _keys2.default)(dragStyle).length === 0) {
-          return;
-        }
+        var style = {
+          width: width || imgStyle.width,
+          height: height || imgStyle.height
+        };
         switch (imgStatus) {
           case _static2.default.BlockChildren:
           case _static2.default.BlockImage:
-            _this.setState({
-              blockStyle: {
-                width: dragStyle.width || imgStyle.width,
-                height: dragStyle.height || imgStyle.height
-              }
-            });
+            _this.setState({ blockStyle: style });
             break;
           case _static2.default.MarkChildren:
           case _static2.default.MarkImage:
-            _this.setState({
-              markStyle: {
-                width: dragStyle.width || imgStyle.width,
-                height: dragStyle.height || imgStyle.height
-              }
-            });
+            _this.setState({ markStyle: style });
             break;
           default:
             break;
@@ -3392,14 +3496,14 @@ var ImageDrag = function (_React$Component) {
       writable: true,
       value: function value(even, style) {
         if (_this.props.onDragStart) {
-          var _this$state5 = _this.state,
-              toolBar = _this$state5.toolBar,
-              _dragStyle2 = _this$state5.dragStyle,
-              _imgStyle = _this$state5.imgStyle;
+          var _this$state6 = _this.state,
+              toolBar = _this$state6.toolBar,
+              dragStyle = _this$state6.dragStyle,
+              imgStyle = _this$state6.imgStyle;
 
           var toolInfo = (0, _extends3.default)({}, toolBar, {
-            width: _dragStyle2.width || _imgStyle.width,
-            height: _dragStyle2.height || _imgStyle.height
+            width: dragStyle.width || imgStyle.width,
+            height: dragStyle.height || imgStyle.height
           });
           _this.props.onDragStart(toolInfo, even, style);
         }
@@ -3408,17 +3512,19 @@ var ImageDrag = function (_React$Component) {
       enumerable: true,
       writable: true,
       value: function value(even, style) {
-        _this.onModifyImageStyle();
-        if (_this.props.onDragEnd) {
-          var _this$state6 = _this.state,
-              toolBar = _this$state6.toolBar,
-              _dragStyle3 = _this$state6.dragStyle,
-              _imgStyle2 = _this$state6.imgStyle;
+        var _this$state7 = _this.state,
+            toolBar = _this$state7.toolBar,
+            dragStyle = _this$state7.dragStyle,
+            imgStyle = _this$state7.imgStyle;
 
-          var toolInfo = (0, _extends3.default)({}, toolBar, {
-            width: _dragStyle3.width || _imgStyle2.width,
-            height: _dragStyle3.height || _imgStyle2.height
-          });
+        var width = dragStyle.width || imgStyle.width;
+        var height = dragStyle.height || imgStyle.height;
+        var toolInfo = (0, _extends3.default)({}, toolBar, {
+          width: width,
+          height: height
+        });
+        _this.onModifyImageStyle(width, height);
+        if (_this.props.onDragEnd) {
           _this.props.onDragEnd(toolInfo, even, style);
         }
       }
@@ -3441,7 +3547,6 @@ var ImageDrag = function (_React$Component) {
     key: 'render',
     value: function render() {
       var _state = this.state,
-          dragStyle = _state.dragStyle,
           imgStyle = _state.imgStyle,
           toolBar = _state.toolBar,
           imgStatus = _state.imgStatus,
@@ -3454,14 +3559,11 @@ var ImageDrag = function (_React$Component) {
           image = _props.image,
           tabIndex = _props.tabIndex;
 
-      var margin = [5, 5];
       var dragProps = {
         padding: 0,
-        margin: margin,
         imgStatus: imgStatus,
         bgImg: image,
         toolBar: toolBar,
-        dragStyle: dragStyle,
         imgStyle: imgStyle,
         dragPoint: dragPoint,
         onStyleChange: this.handleStyleChange,
@@ -3490,12 +3592,24 @@ var ImageDrag = function (_React$Component) {
   return ImageDrag;
 }(_react2.default.Component);
 
+// API
+
+
 ImageDrag.defaultProps = {
   tabIndex: 0,
   imgStyle: {
     width: 600,
     height: 400
-  }
+  },
+  dragPoint: {},
+  toolBar: {},
+  onClickImage: null,
+  onFocusImage: null,
+  onBlurImage: null,
+  onDragEnd: null,
+  onDragStart: null,
+  onDragging: null,
+  renderTool: null
 };
 
 exports.default = ImageDrag;

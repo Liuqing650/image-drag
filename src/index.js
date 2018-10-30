@@ -97,7 +97,6 @@ class ImageDrag extends React.Component {
       imgStatus,
       renderTool: renderTool || null
     });
-    this.reload(_toolBar, 'init');
   }
   updateToolBar = (props) => {
     const { children, toolBar, image } = props || this.props;
@@ -117,14 +116,7 @@ class ImageDrag extends React.Component {
       toolBar: _toolBar,
       dragStyle: _dragStyle,
     });
-    this.reload(_toolBar, 'update');
   }
-  // 事件完成后回调信息
-  reload = (info, status) => {
-    if (this.props.reload) {
-      this.props.reload(info, status);
-    }
-  };
   handleStyleChange = (style) => {
     this.setState({dragStyle: style});
     if (this.props.onDragging) {
@@ -169,6 +161,7 @@ class ImageDrag extends React.Component {
   renderToolBar = () => {
     const { toolBar, dragStyle, imgStyle, renderTool } = this.state;
     const isShowToolBar = toolBar.isUse && (toolBar.isShow || toolBar.isFocus);
+    const toolBarStyle = { position: 'absolute', };
     if (renderTool && typeof renderTool === 'function') {
       const toolInfo = {
         ...toolBar,
@@ -176,9 +169,6 @@ class ImageDrag extends React.Component {
         height: dragStyle.height || imgStyle.height,
       };
       return renderTool(toolInfo);
-    }
-    const toolBarStyle = {
-      position: 'absolute',
     }
     if (isShowToolBar) {
       return (
@@ -190,7 +180,7 @@ class ImageDrag extends React.Component {
     }
   }
   onFocusImage = (even) => {
-    const { toolBar } = this.state;
+    const { toolBar, dragStyle, imgStyle } = this.state;
     even.preventDefault();
     if (!toolBar.isFocus) {
       this.setState({
@@ -199,16 +189,20 @@ class ImageDrag extends React.Component {
           isFocus: true
         }
       });
-    } else {
-      const onClickImage = this.props.onClickImage;
-      if (onClickImage && typeof onClickImage === 'function') {
-        const toolInfo = {
-          ...toolBar,
-          width: dragStyle.width || imgStyle.width,
-          height: dragStyle.height || imgStyle.height
-        };
-        onClickImage(toolInfo);
+    }
+    const toolInfo = {
+      ...toolBar,
+      width: dragStyle.width || imgStyle.width,
+      height: dragStyle.height || imgStyle.height
+    };
+    const isShow = !toolBar.isFocus && !toolBar.isShow;
+    if (isShow) {
+      if (this.props.onClickImage) {
+        this.props.onClickImage(toolInfo);
       }
+    }
+    if (this.props.onFocusImage) {
+      this.props.onFocusImage(toolInfo);
     }
   }
   onBlurImage = (even) => {
@@ -219,6 +213,9 @@ class ImageDrag extends React.Component {
         isFocus: false
       }
     });
+    if (this.props.onBlurImage) {
+      this.props.onBlurImage(toolBar);
+    }
   }
   onModifyImageStyle = (width, height) => {
     // imgStyle 保留初始值
@@ -264,7 +261,6 @@ class ImageDrag extends React.Component {
     if (this.props.onDragEnd) {
       this.props.onDragEnd(toolInfo, even, style);
     }
-    this.reload(toolInfo, 'dragEnd');
   }
   render() {
     const { imgStyle, toolBar, imgStatus, dragPoint } = this.state;
@@ -300,12 +296,22 @@ class ImageDrag extends React.Component {
   }
 }
 
+// API
 ImageDrag.defaultProps={
   tabIndex: 0,
   imgStyle: {
     width: 600,
     height: 400
-  }
+  },
+  dragPoint: {},
+  toolBar: {},
+  onClickImage: null,
+  onFocusImage: null,
+  onBlurImage: null,
+  onDragEnd: null,
+  onDragStart: null,
+  onDragging: null,
+  renderTool: null,
 };
 
 export default ImageDrag;

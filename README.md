@@ -33,6 +33,8 @@ class Image extends React.Component {
 export default Image;
 ```
 
+[CODE](https://github.com/Liuqing650/image-drag/blob/master/example/example.js)
+
 ## API
 
 |name|type|desc|other|version|
@@ -40,7 +42,7 @@ export default Image;
 |width|number|图片区域宽度|默认600|v 1.0.0|
 |height|number|图片区域高度|默认400|v 1.0.0|
 |image|`file` or `url`|图片|*|v 1.0.0|
-|children|`dom元素`|图片|*, 如果`image`也存在，此属性优先|v 1.0.0|
+|children|`dom元素`|图片|*, 如果`image`也存在，此属性（`children`）优先|v 1.0.0|
 |imgStyle|object|图片样式属性|*|v 1.0.0|
 |toolBar|object|工具栏配置|*|v 1.0.0|
 |dragPoint|object|拖拽点配置|*|v 1.0.0|
@@ -49,9 +51,13 @@ export default Image;
 |onDragStart|function|拖拽开始|function(toolInfo, event, [clientX, clientY])|**v 1.1.0**|
 |onDragging|function|拖拽中|function(imageDragStyle)|**v 1.1.0**|
 |onDragEnd|function|拖拽结束|function(toolInfo, event, [clientX, clientY])|**v 1.1.0**|
+|onFocusImage|function|获取图片焦点事件|function(toolInfo)|**v 1.2.1**|
+|onBlurImage|function|失去图片焦点事件|function(toolInfo)|**v 1.2.1**|
 |renderTool|function|自定义工具栏显示形式|function(toolInfo),接收一个Dom元素|v 1.0.0|
 
 > renderTool中传入的参数为 `toolBar` 中的信息， 同时会多传递一个刷新图片尺寸的函数
+>
+> 在 **v 1.2.x** 及以上版本中 `function(toolInfo)` 传递的 `toolInfo` 为只读属性
 
 ## toolBar
 
