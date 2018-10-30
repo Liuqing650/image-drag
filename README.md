@@ -48,9 +48,9 @@ export default Image;
 |dragPoint|object|拖拽点配置|*|v 1.0.0|
 |tabIndex|string|设置 tabIndex 属性|*|**v 1.2.0**|
 |onClickImage|function|点击图片|function(toolInfo)|v 1.0.0|
-|onDragStart|function|拖拽开始|function(toolInfo, event, [clientX, clientY])|**v 1.1.0**|
-|onDragging|function|拖拽中|function(imageDragStyle)|**v 1.1.0**|
-|onDragEnd|function|拖拽结束|function(toolInfo, event, [clientX, clientY])|**v 1.1.0**|
+|onDragStart|function|拖拽开始|function(toolInfo, event, [clientX, clientY])|v 1.1.0|
+|onDragging|function|拖拽中|function(imageDragStyle)|v 1.1.0|
+|onDragEnd|function|拖拽结束|function(toolInfo, event, [clientX, clientY])|v 1.1.0|
 |onFocusImage|function|获取图片焦点事件|function(toolInfo)|**v 1.2.1**|
 |onBlurImage|function|失去图片焦点事件|function(toolInfo)|**v 1.2.1**|
 |renderTool|function|自定义工具栏显示形式|function(toolInfo),接收一个Dom元素|v 1.0.0|
