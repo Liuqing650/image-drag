@@ -13,6 +13,7 @@ class ImageDrag extends React.Component {
     imageInfo: {},
     imgStatus: '',
     renderTool: null,
+    disable: {}                       // 可能需要禁用的内部属性
   }
   componentWillMount() {
     this.init();
@@ -53,7 +54,6 @@ class ImageDrag extends React.Component {
       imageInfo: {
         attr: attr || '',
         title: title || '',
-        isFocus: false,
       }
     });
   }
@@ -95,7 +95,10 @@ class ImageDrag extends React.Component {
     this.setState({
       toolBar: _toolBar,
       imgStatus,
-      renderTool: renderTool || null
+      renderTool: renderTool || null,
+      disable: {
+        isFocus: toolBar.hasOwnProperty('isShow')
+      }
     });
   }
   updateToolBar = (props) => {
@@ -115,6 +118,9 @@ class ImageDrag extends React.Component {
     this.setState({
       toolBar: _toolBar,
       dragStyle: _dragStyle,
+      disable: {
+        isFocus: toolBar.hasOwnProperty('isShow')
+      }
     });
   }
   handleStyleChange = (style) => {
@@ -142,7 +148,7 @@ class ImageDrag extends React.Component {
     this.onModifyImageStyle(width, height);
   }
   onFocusImage = (even) => {
-    const { toolBar, dragStyle, imgStyle } = this.state;
+    const { toolBar, dragStyle, imgStyle, disable } = this.state;
     even.preventDefault();
     if (!toolBar.isFocus) {
       this.setState({
@@ -157,8 +163,8 @@ class ImageDrag extends React.Component {
       width: dragStyle.width || imgStyle.width,
       height: dragStyle.height || imgStyle.height
     };
-    const isShow = !toolBar.isFocus && !toolBar.isShow;
-    if (isShow) {
+    const isShow = disable.isFocus ? toolBar.isShow : toolBar.isFocus;
+    if (!isShow) {
       if (this.props.onClickImage) {
         this.props.onClickImage(toolInfo);
       }
@@ -242,10 +248,11 @@ class ImageDrag extends React.Component {
     }
   }
   renderDrag = () => {
-    const { imgStyle, imgStatus, dragPoint, toolBar } = this.state;
+    const { imgStyle, imgStatus, dragPoint, toolBar, disable } = this.state;
     const { image } = this.props;
-    const isHideDrag = !toolBar.isUse || !toolBar.isUse || !toolBar.isShow;
-    console.log('isHideDrag--%s--isShow--%s--isFocus--%s', isHideDrag, toolBar.isShow, toolBar.isFocus);
+    const isShow = disable.isFocus ? toolBar.isShow : toolBar.isFocus;
+    const isShowDrag = toolBar.isUse && isShow;
+    console.log('isShowDrag--%s--isShow--%s', isShowDrag, isShow);
     const dragProps = {
       padding: 0,
       imgStatus: imgStatus,
@@ -256,11 +263,12 @@ class ImageDrag extends React.Component {
       onDragStart: this.onDragStart,
       onDragEnd: this.onDragEnd
     }
-    return !isHideDrag ? <Drag {...dragProps} /> : null;
+    return isShowDrag ? <Drag {...dragProps} /> : null;
   };
   renderToolBar = () => {
-    const { toolBar, dragStyle, imgStyle, renderTool } = this.state;
-    const isShowToolBar = toolBar.isUse && (toolBar.isShow || toolBar.isFocus);
+    const { toolBar, dragStyle, imgStyle, renderTool, disable } = this.state;
+    const isShow = disable.isFocus ? toolBar.isShow : toolBar.isFocus;
+    const isShowToolBar = toolBar.isUse && isShow;
     const toolBarStyle = { position: 'absolute', };
     if (renderTool && typeof renderTool === 'function') {
       const toolInfo = {
