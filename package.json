@@ -1,8 +1,8 @@
 {
   "name": "image-drag",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "一个使用拖拽修改图片尺寸的组件",
-  "main": "src/index.js",
+  "main": "lib/index.js",
   "engines": {
     "node": ">=7.9.0"
   },
