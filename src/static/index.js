@@ -3,5 +3,5 @@ const staticOpts = {
   MarkChildren: 'MARK-CHILDREN',
   BlockImage: 'BLOCK-IMAGE',
   MarkImage: 'MARK-IMAGE',
-}
+};
 export default staticOpts;
