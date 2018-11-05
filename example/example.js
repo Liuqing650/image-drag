@@ -3,55 +3,25 @@ import ImageDrag from '../src';
 
 const imgSrc = 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1540805600&di=36ca8557dbe2dd2a6d5a285b7a63559c&imgtype=jpg&er=1&src=http%3A%2F%2Fimgsrc.baidu.com%2Fimgad%2Fpic%2Fitem%2F4610b912c8fcc3ce79f8f9099945d688d43f20cb.jpg';
 
-class CustomizeExample extends Component {
-  state = {
-    width: 0,
-    height: 0,
-    isImageFocus: false,
-    isFocus: false
+class InputBar extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      width: props.width,
+      height: props.height
+    };
+    this.timeIndex = 0;
   }
-  dragStart = (toolInfo) => {
-    if (!this.props.isLog) {
-      return;
+  componentWillReceiveProps(newProps) {
+    if (newProps !== this.props) {
+      this.setState({
+        width: newProps.width,
+        height: newProps.height
+      });
     }
-    console.log('dragStart---->', toolInfo);
   }
-  dragEnd = (toolInfo) => {
-    // 更新拖拽后的数据到自定义拖拽栏下
-    this.onUpdateStyle(toolInfo);
-    if (!this.props.isLog) {
-      return;
-    }
-    console.log('dragEnd---->', toolInfo);
-  }
-  dragging = (style) => {
-    if (!this.props.isLog) {
-      return;
-    }
-    console.log('dragging---->', style);
-  }
-  handleEvent = (event) => {
-    event.stopPropagation();
-  }
-  handleFocusImage = (isImageFocus) => {
-    this.setState({isImageFocus});
-  }
-  handleFocus = (isFocus) => {
-    this.setState({isFocus});
-  }
-  handleBlur = (event, toolInfo) => {
-    this.setState({isFocus: false});
-    this.onChangeSize(toolInfo);
-  }
-  handleClickImage = (toolInfo) => {
-    // 每次点击图片时获取焦点数据
-    this.onUpdateStyle(toolInfo);
-  }
-  handleKeyPress = (event, toolInfo) => {
-    this.handleEvent(event);
-    if (event.key === 'Enter') {
-      this.onChangeSize(toolInfo);
-    }
+  componentWillUnmount = () => {
+    clearTimeout(this.timeIndex);
   }
   onInputWidthChange = (event) => {
     if (!isNaN(Number(event.target.value))) {
@@ -67,59 +37,153 @@ class CustomizeExample extends Component {
       });
     }
   }
-  onChangeSize = (toolInfo) => {
-    const { width, height } = this.state;
-    toolInfo.changeSize(width, height);
+  handleEvent = (event) => {
+    event.stopPropagation();
   }
-  onUpdateStyle = (toolInfo) => {
+  handleUpdate = () => {
+    const {width, height} = this.state;
+    if (this.props.onChangeSize) {
+      this.props.onChangeSize(width, height);
+    }
+  }
+  handleFocus = (event) => {
+    this.isFocus = true;
+    this.timeIndex = setTimeout(() => {
+      this.isFocus = false;
+    }, 0);
+    if (this.props.onFocus) {
+      this.props.onFocus();
+    }
+  }
+  handleBlur = (event) => {
+    this.handleUpdate();
+    if (!this.isFocus) {
+      if (this.props.onBlur) {
+        this.props.onBlur();
+      }
+    }
+  }
+  handleKeyPress = (event) => {
+    this.handleEvent(event);
+    if (event.key === 'Enter') {
+      this.handleUpdate();
+    }
+  }
+  render() {
+    const { width, height } = this.state;
+    const eventProps = {
+      onBlur: this.handleBlur,
+      onMouseDown: this.handleFocus,
+      onClick: this.handleEvent,
+      onKeyPress: this.handleKeyPress,
+    };
+    const widthProps = {
+      ...eventProps,
+      onChange: this.onInputWidthChange,
+      value: width,
+    };
+    const heightProps = {
+      ...eventProps,
+      onChange: this.onInputHeightChange,
+      value: height,
+    };
+    return (
+      <div contentEditable={false} style={{position: 'absolute'}}>
+        width: <span><input {...widthProps} type="text" /></span>
+        height: <span><input {...heightProps} /></span>
+      </div>
+    );
+  }
+}
+
+// 复杂示例
+class CustomizeExample extends Component {
+  state = {
+    width: 0,
+    height: 0,
+    isImageFocus: false,
+    isFocus: false,
+    isSelected: false,
+  }
+  dragStart = (toolInfo) => {
+    if (this.props.isLog) {
+      console.log('dragStart---->', toolInfo);
+    }
+  }
+  dragEnd = (toolInfo) => {
+    // 更新拖拽后的数据到自定义拖拽栏下
+    if (this.props.isLog) {
+      console.log('dragEnd---->', toolInfo);
+    }
     this.setState({
       width: Number(toolInfo.width),
       height: Number(toolInfo.height),
     });
   }
+  dragging = (toolInfo) => {
+    if (this.props.isLog) {
+      console.log('dragging---->', toolInfo);
+    }
+    this.setState({
+      width: Number(toolInfo.width),
+      height: Number(toolInfo.height),
+    });
+  }
+  handleEvent = (event) => {
+    event.stopPropagation();
+  }
+  handleFocus = () => {
+    this.setState({isFocus: true});
+  }
+  handleBlur = () => {
+    this.setState({isFocus: false});
+  }
+  changeSize = (width, height, toolInfo) => {
+    toolInfo.changeSize(width, height);
+    this.setState({
+      width,
+      height,
+    });
+  }
+  handleClickImage = (toolInfo) => {
+    const { width, height } = this.state;
+    if (width === 0 && height === 0) {
+      this.setState({
+        width: Number(toolInfo.width),
+        height: Number(toolInfo.height),
+      });
+    }
+  }
+  renderToolBar = (toolInfo) => {
+    if (!toolInfo.isUse || !toolInfo.isShow) {
+      return;
+    }
+    const { width, height } = this.state;
+    const toolBarProps = {
+      width,
+      height,
+      onFocus: this.handleFocus,
+      onBlur: this.handleBlur,
+      onChangeSize: (width, height) => this.changeSize(width, height, toolInfo),
+    };
+    return (<InputBar {...toolBarProps} />);
+  };
   render() {
-    const self = this;
     const dragRenderProps = {
       width: 600,
       image: imgSrc,
+      tabIndex: 'false',
       onDragEnd: this.dragEnd,
       onDragStart: this.dragStart,
       onDragging: this.dragging,
       onClickImage: this.handleClickImage,
-      onFocusImage: () => this.handleFocusImage(true),
-      onBlurImage: () => this.handleFocusImage(false),
+      onFocusImage: this.handleFocus,
+      onBlurImage: this.handleBlur,
       toolBar: {
-        isShow: this.state.isFocus || this.state.isImageFocus,
+        isShow: this.state.isFocus,
         isUse: this.props.isUse,
       },
-      renderTool(toolInfo) {
-        if (!toolInfo.isUse || !toolInfo.isShow) {
-          return;
-        }
-        const { width, height } = self.state;
-        const eventProps = {
-          onBlur: (event) => self.handleBlur(event, toolInfo),
-          onMouseDown: () => self.handleFocus(true),
-          onClick: self.handleEvent,
-          onKeyPress: (event) => self.handleKeyPress(event, toolInfo),
-        };
-        const widthProps = {
-          ...eventProps,
-          onChange: (event) => self.onInputWidthChange(event, toolInfo),
-          value: width,
-        };
-        const heightProps = {
-          ...eventProps,
-          onChange: (event) => self.onInputHeightChange(event, toolInfo),
-          value: height,
-        };
-        return (
-          <div style={{position: 'absolute'}}>
-            width: <span><input {...widthProps} /></span>
-            height: <span><input {...heightProps} /></span>
-          </div>
-        );
-      }
+      renderTool: this.renderToolBar
     }
     return (
       <ImageDrag {...dragRenderProps}>
@@ -134,6 +198,7 @@ class CustomizeExample extends Component {
   }
 }
 
+// 简单示例
 class SimpleExample extends Component {
   render() {
     const dragProps = {
@@ -154,15 +219,15 @@ export default class Example extends Component {
     isUse: true,
     isLog: false
   }
-  onChangePoint = () => {
+  handlePoint = () => {
     const { isShow } = this.state;
     this.setState({isShow: !isShow});
   }
-  onChangeToolbar = () => {
+  handleToolbar = () => {
     const { isUse } = this.state;
     this.setState({isUse: !isUse});
   }
-  onChangeLog = () => {
+  handleLog = () => {
     const { isLog } = this.state;
     this.setState({isLog: !isLog});
   }
@@ -176,9 +241,9 @@ export default class Example extends Component {
     return (
       <div>
         <div style={wrapStyle}>
-          <button onClick={this.onChangePoint}>{isShow ? 'HIDE' : 'SHOW'}</button>
-          <button onClick={this.onChangeToolbar}>{isUse ? 'HIDE-TOOLBAR' : 'SHOW-TOOLBAR'}</button>
-          <button onClick={this.onChangeLog}>{isLog ? 'HIDE-LOG' : 'SHOW-LOG'}</button>
+          <button onClick={this.handlePoint}>{isShow ? 'HIDE' : 'SHOW'}</button>
+          <button onClick={this.handleToolbar}>{isUse ? 'HIDE-TOOLBAR' : 'SHOW-TOOLBAR'}</button>
+          <button onClick={this.handleLog}>{isLog ? 'HIDE-LOG' : 'SHOW-LOG'}</button>
           <h1>自定义示例-含子元素</h1>
           <CustomizeExample isUse={isUse} isLog={isLog} />
           <h1>简单示例-不含子元素</h1>

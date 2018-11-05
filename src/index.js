@@ -195,11 +195,15 @@ class ImageDrag extends React.Component {
     switch (imgStatus) {
       case opt.BlockChildren:
       case opt.BlockImage:
-        this.setState({ blockStyle: { ...blockStyle, ...style }});
+        this.setState({
+          blockStyle: { ...blockStyle, ...style },
+        });
         break;
       case opt.MarkChildren:
       case opt.MarkImage:
-        this.setState({ markStyle: { ...markStyle, ...style } });
+        this.setState({
+          markStyle: { ...markStyle, ...style }
+        });
         break;
       default:
         break;
@@ -248,22 +252,22 @@ class ImageDrag extends React.Component {
     }
   }
   renderDrag = () => {
-    const { imgStyle, imgStatus, dragPoint, toolBar, disable } = this.state;
+    const { imgStyle, imgStatus, dragPoint, disable, toolBar } = this.state;
     const { image } = this.props;
     const isShow = disable.isFocus ? toolBar.isShow : toolBar.isFocus;
     const isShowDrag = toolBar.isUse && isShow;
-    console.log('isShowDrag--%s--isShow--%s', isShowDrag, isShow);
     const dragProps = {
       padding: 0,
       imgStatus: imgStatus,
       bgImg: image,
+      visible: isShowDrag,
       imgStyle: imgStyle,
       dragPoint: dragPoint,
       onStyleChange: this.handleStyleChange,
       onDragStart: this.onDragStart,
       onDragEnd: this.onDragEnd
     }
-    return isShowDrag ? <Drag {...dragProps} /> : null;
+    return <Drag {...dragProps} />;
   };
   renderToolBar = () => {
     const { toolBar, dragStyle, imgStyle, renderTool, disable } = this.state;

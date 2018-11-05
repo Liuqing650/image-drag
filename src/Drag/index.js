@@ -253,13 +253,14 @@ class Drag extends React.Component {
     }
     render() {
         const { isMove,  bgImgStyle, imgStyle } = this.state;
-        const { bgImg } = this.props;
+        const { bgImg, visible } = this.props;
         return (
           <div
             style={{
               width: imgStyle.width,
               height: imgStyle.height,
               position: 'absolute',
+              display: `${visible ? 'block' : 'none'}`,
               top: imgStyle.top || 0,
               bottom: imgStyle.bottom || 0,
               right: imgStyle.right || 0,
