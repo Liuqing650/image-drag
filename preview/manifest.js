@@ -1,7 +1,7 @@
 /** *** */ (function (modules) { // webpackBootstrap
 /** *** */ 	// install a JSONP callback for chunk loading
-/** *** */ 	var parentJsonpFunction = window["webpackJsonpimageDrag"];
-/** *** */ 	window["webpackJsonpimageDrag"] = function webpackJsonpCallback(chunkIds, moreModules, executeModules) {
+/** *** */ 	var parentJsonpFunction = window['webpackJsonpimageDrag'];
+/** *** */ 	window['webpackJsonpimageDrag'] = function webpackJsonpCallback(chunkIds, moreModules, executeModules) {
 /** *** */ 		// add "moreModules" to the modules object,
 /** *** */ 		// then flag all "chunkIds" as loaded and fire callback
 /** *** */ 		var moduleId, chunkId, i = 0, resolves = [], result;
@@ -92,7 +92,7 @@
 /** *** */ 	__webpack_require__.o = function (object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
 /** *** */
 /** *** */ 	// __webpack_public_path__
-/** *** */ 	__webpack_require__.p = "./";
+/** *** */ 	__webpack_require__.p = './';
 /** *** */
 /** *** */ 	// on error function for async loading
 /** *** */ 	__webpack_require__.oe = function (err) { console.error(err); throw err; };
